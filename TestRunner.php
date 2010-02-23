@@ -1,13 +1,8 @@
 <?php
 
-require dirname(__FILE__) . '/propel_15/Propel15TestSuite.php';
+echo "                     | Insert | findPk |   find |   with |\n";
+echo "                     |--------|--------|--------|------- |\n";
 
-$test = new Propel15TestSuite();
-$test->initialize();
-$test->run();
-
-require dirname(__FILE__) . '/raw_pdo/PDOTestSuite.php';
-
-$test = new PDOTestSuite();
-$test->initialize();
-$test->run();
+passthru('php raw_pdo/TestRunner.php');
+passthru('php propel_14/TestRunner.php');
+passthru('php propel_15/TestRunner.php');

@@ -26,7 +26,7 @@ abstract class AbstractTestSuite
 		$t2 = $this->runTest('runPKSearch', 5000);
 		$t3 = $this->runTest('runSearch', 1200);
 		$t4 = $this->runTest('runJoinSearch', 800);
-		echo sprintf("%20s | %5d | %5d | %5d | %5d\n", get_class($this), $t1, $t2, $t3, $t4);
+		echo sprintf("%20s | %6d | %6d | %6d | %6d |\n", get_class($this), $t1, $t2, $t3, $t4);
 	}
 	
 	public function runTest($methodName, $nbTest = self::NB_TEST)
