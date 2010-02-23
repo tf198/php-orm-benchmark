@@ -75,10 +75,9 @@ class Propel15TestSuite extends AbstractTestSuite
 	function runJoinSearch($i)
 	{
 		$books = BookQuery::create()
-			->filterByTitle('Hello%')
+			->filterByTitle('Hello' . $i)
 			->leftJoinWith('Book.Author')
-			->limit(5)
-			->find($this->con);
+			->findOne($this->con);
 	}
 	
 }

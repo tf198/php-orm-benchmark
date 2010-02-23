@@ -75,12 +75,11 @@ class PDOTestSuite extends AbstractTestSuite
 	
 	function runJoinSearch($i)
 	{
-		$query = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.AUTHOR_ID, author.ID, author.FIRST_NAME, author.LAST_NAME, author.EMAIL FROM book LEFT JOIN author ON book.AUTHOR_ID = author.ID WHERE book.TITLE LIKE ? LIMIT 5';
+		$query = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.AUTHOR_ID, author.ID, author.FIRST_NAME, author.LAST_NAME, author.EMAIL FROM book LEFT JOIN author ON book.AUTHOR_ID = author.ID WHERE book.TITLE = ? LIMIT 1';
 		$stmt = $this->con->prepare($query);
-		$str = 'Hello%';
+		$str = 'Hello' . $i;
 		$stmt->bindParam(1, $str, PDO::PARAM_STR);
 		$stmt->execute();
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-		}
+		$book = $stmt->fetch(PDO::FETCH_ASSOC);
 	}
 }

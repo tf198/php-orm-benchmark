@@ -74,9 +74,10 @@ class Propel14TestSuite extends AbstractTestSuite
 	function runJoinSearch($i)
 	{
 		$c = new Criteria();
-		$c->add(BookPeer::TITLE, 'Hello%', Criteria::LIKE);
-		$c->setLimit(5);
+		$c->add(BookPeer::TITLE, 'Hello' . $i, Criteria::EQUAL);
+		$c->setLimit(1);
 		$books = BookPeer::doSelectJoinAuthor($c, $this->con);
+		$book = $books[0];
 	}
 	
 }
