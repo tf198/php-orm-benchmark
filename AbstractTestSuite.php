@@ -21,11 +21,11 @@ abstract class AbstractTestSuite
 	
 	public function run()
 	{
-		$t1 =  $this->runTest('runAuthorInsertion');
-		$t1 += $this->runTest('runBookInsertion');
-		$t2 = $this->runTest('runPKSearch', 5000);
-		$t3 = $this->runTest('runSearch', 1200);
-		$t4 = $this->runTest('runJoinSearch', 800);
+		$t1 =  $this->runTest('runAuthorInsertion', 1500);
+		$t1 += $this->runTest('runBookInsertion', 1500);
+		$t2 = $this->runTest('runPKSearch', 1800);
+		$t3 = $this->runTest('runSearch', 1500);
+		$t4 = $this->runTest('runJoinSearch', 700);
 		echo sprintf("%20s | %6d | %6d | %6d | %6d |\n", get_class($this), $t1, $t2, $t3, $t4);
 	}
 	

@@ -17,6 +17,7 @@ class Propel15TestSuite extends AbstractTestSuite
 		$conf['log'] = null;
 		Propel::setConfiguration($conf);
 		Propel::initialize();
+		Propel::disableInstancePooling();
 		
 		$this->con = Propel::getConnection('bookstore');
 		$schemaSQL = file_get_contents(dirname(__FILE__) . '/build/sql/schema.sql');
