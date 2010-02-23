@@ -2,17 +2,17 @@
 
 require_once dirname(__FILE__) . '/../AbstractTestSuite.php';
 
-class Propel15TestSuite extends AbstractTestSuite
+class Propel14TestSuite extends AbstractTestSuite
 {
 	function initialize()
 	{
 		set_include_path(
 			realpath(dirname(__FILE__) . '/build/classes') . PATH_SEPARATOR .
-			realpath(dirname(__FILE__) . '/vendor/propel/runtime/lib') . PATH_SEPARATOR .
+			realpath(dirname(__FILE__) . '/vendor/propel/runtime/classes') . PATH_SEPARATOR .
 			get_include_path()
 		);
 
-		require_once 'Propel.php';
+		require_once 'propel/Propel.php';
 		$conf = include realpath(dirname(__FILE__) . '/build/conf/bookstore-conf.php');
 		$conf['log'] = null;
 		Propel::setConfiguration($conf);
@@ -60,25 +60,23 @@ class Propel15TestSuite extends AbstractTestSuite
 	
 	function runPKSearch($i)
 	{
-		$author = AuthorQuery::create()
-			->findPk($this->authors[array_rand($this->authors)], $this->con);
+		$author = AuthorPeer::retrieveByPk($this->authors[array_rand($this->authors)], $this->con);
 	}
 	
 	function runSearch($i)
 	{
-		$authors = AuthorQuery::create()
-			->where('Author.Id > ?', $this->authors[array_rand($this->authors)])
-			->limit(5)
-			->find($this->con);
+		$c = new Criteria();
+		$c->add(AuthorPeer::ID, $this->authors[array_rand($this->authors)], Criteria::GREATER_THAN);
+		$c->setLimit(5);
+		$authors = AuthorPeer::doSelect($c, $this->con);
 	}
 	
 	function runJoinSearch($i)
 	{
-		$books = BookQuery::create()
-			->filterByTitle('Hello%')
-			->leftJoinWith('Book.Author')
-			->limit(5)
-			->find($this->con);
+		$c = new Criteria();
+		$c->add(BookPeer::TITLE, 'Hello%', Criteria::LIKE);
+		$c->setLimit(5);
+		$books = BookPeer::doSelectJoinAuthor($c, $this->con);
 	}
 	
 }
