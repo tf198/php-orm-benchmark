@@ -1,0 +1,15 @@
+---
+detect_relations: true
+
+Book:
+  columns:
+    title: string
+    isbn: string(24)
+    price: float
+    author_id: integer
+
+Author:
+  columns:
+    first_name: string
+    last_name: string
+    email: string
