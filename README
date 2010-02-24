@@ -1,0 +1,28 @@
+Requirements
+------------
+
+* linux or bsd system
+* PHP 5.2
+* pdo_sqlite
+
+Running All The Benchmarks
+--------------------------
+
+    > php TestRunner.php
+
+Running One Of The Benchmarks
+-----------------------------
+
+    > cd propel_15
+    > php TestRunner.php
+
+Test Scenarii
+-------------
+
+1. Mass insertion: Tests model objects and save() operations.
+
+2. Retrieve By Pk: Tests basic hydration
+
+3. Basic Query with 5 results: Tests Query parsing and collections
+
+3. Query with join: Tests join hydration
