@@ -21,7 +21,11 @@ class Doctrine12TestSuite extends AbstractTestSuite
 		spl_autoload_register(array('Doctrine', 'modelsAutoload'));
 		
 		// import db
-		$this->manager->dropDatabases();
+		try {
+			$this->manager->dropDatabases();
+		} catch (Doctrine_Export_Exception $e) {
+			// do nothing; it's probably the first time the test is run
+		}
 		$this->manager->createDatabases();
 		Doctrine_Core::createTablesFromModels(dirname(__FILE__) . '/models');
 	}
