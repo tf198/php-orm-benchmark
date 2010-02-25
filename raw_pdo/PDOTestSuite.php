@@ -49,7 +49,7 @@ class PDOTestSuite extends AbstractTestSuite
 
 	function runBookInsertion($i)
 	{
-		$query = sprintf('INSERT INTO book ([title],[isbn],[author_id]) VALUES (\'Hello%s\',\'1234\',%d)', $i, $this->authors[array_rand($this->authors)]);
+		$query = sprintf('INSERT INTO book ([title],[isbn],[price],[author_id]) VALUES (\'Hello%s\',\'1234\',%d,%d)', $i, $i, $this->authors[array_rand($this->authors)]);
 		$this->con->exec($query);
 		$this->books[]= $this->con->lastInsertId();
 	}
@@ -63,14 +63,25 @@ class PDOTestSuite extends AbstractTestSuite
 		$author = $stmt->fetch(PDO::FETCH_ASSOC);
 	}
 	
-	function runSearch($i)
+	function runHydrate($i)
 	{
-		$query = 'SELECT author.ID, author.FIRST_NAME, author.LAST_NAME, author.EMAIL FROM author WHERE author.ID > ? LIMIT 5';
+		$query = 'SELECT book.ID, book.TITLE, book.ISBN, book.PRICE, book.AUTHOR_ID FROM book WHERE book.PRICE > ? LIMIT 5';
 		$stmt = $this->con->prepare($query);
-		$stmt->bindParam(1, $this->authors[array_rand($this->authors)], PDO::PARAM_INT);
+		$stmt->bindParam(1, $i, PDO::PARAM_INT);
 		$stmt->execute();
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 		}
+	}
+
+	function runComplexQuery($i)
+	{
+		$query = 'SELECT COUNT(*) FROM author WHERE (author.ID>? OR (author.FIRST_NAME||author.LAST_NAME) = ?)  LIMIT 5';
+		$stmt = $this->con->prepare($query);
+		$stmt->bindParam(1, $this->authors[array_rand($this->authors)], PDO::PARAM_INT);
+		$name = 'John Doe';
+		$stmt->bindParam(2, $name, PDO::PARAM_STR);
+		$stmt->execute();
+		$stmt->fetch(PDO::FETCH_NUM);
 	}
 	
 	function runJoinSearch($i)

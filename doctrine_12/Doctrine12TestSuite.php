@@ -61,6 +61,7 @@ class Doctrine12TestSuite extends AbstractTestSuite
 		$book->title = 'Hello' . $i;
 		$book->author_id = $this->authors[array_rand($this->authors)];
 		$book->isbn = '1234';
+		$book->price = $i;
 		$book->save($this->con);
 		$this->books[]= $book->id;
 	}
@@ -70,23 +71,37 @@ class Doctrine12TestSuite extends AbstractTestSuite
 		$author = Doctrine_Core::getTable('Author')->find($this->authors[array_rand($this->authors)]);
 	}
 	
-	function runSearch($i)
+	function runComplexQuery($i)
 	{
 		$authors = Doctrine_Query::create()
 			->from('Author a')
 			->where('a.id > ?', $this->authors[array_rand($this->authors)])
+			->orWhere('(a.first_name || a.last_name) = ?', 'John Doe')
+			->limit(5)
+			->count();
+	}
+
+	function runHydrate($i)
+	{
+		$books = Doctrine_Query::create()
+			->from('Book b')
+			->where('b.price > ?', $i)
 			->limit(5)
 			->execute();
+		foreach ($books as $book) {
+			// removing the record from the instance pool, otherwise we are not testing hydration time!
+			$book->free(true);
+		}
 	}
 	
 	function runJoinSearch($i)
 	{
-		$books = Doctrine_Query::create()
-			->from('Book b, b.Author a')
+		$book = Doctrine_Query::create()
+			->from('Book b')
+			->leftJoin('b.Author a')
 			->where('b.title = ?', 'Hello' . $i)
 			->limit(1)
 			->fetchOne();
-		$book = isset($books[0]) ? $books[0] : null;
 	}
 	
 }

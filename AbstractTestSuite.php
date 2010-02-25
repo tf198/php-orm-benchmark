@@ -16,17 +16,19 @@ abstract class AbstractTestSuite
 	abstract function runAuthorInsertion($i);
 	abstract function runBookInsertion($i);
 	abstract function runPKSearch($i);
-	abstract function runSearch($i);
+	abstract function runComplexQuery($i);
+	abstract function runHydrate($i);
 	abstract function runJoinSearch($i);
 	
 	public function run()
 	{
-		$t1 =  $this->runTest('runAuthorInsertion', 1500);
-		$t1 += $this->runTest('runBookInsertion', 1500);
+		$t1 =  $this->runTest('runAuthorInsertion', 1600);
+		$t1 += $this->runTest('runBookInsertion', 1600);
 		$t2 = $this->runTest('runPKSearch', 1800);
-		$t3 = $this->runTest('runSearch', 1500);
-		$t4 = $this->runTest('runJoinSearch', 700);
-		echo sprintf("%30s | %6d | %6d | %6d | %6d |\n", get_class($this), $t1, $t2, $t3, $t4);
+		$t3 = $this->runTest('runComplexQuery', 200);
+		$t4 = $this->runTest('runHydrate', 750);
+		$t5 = $this->runTest('runJoinSearch', 700);
+		echo sprintf("%30s | %6d | %6d | %6d | %6d | %6d |\n", get_class($this), $t1, $t2, $t3, $t4, $t5);
 	}
 	
 	public function runTest($methodName, $nbTest = self::NB_TEST)

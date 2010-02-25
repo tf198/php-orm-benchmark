@@ -55,6 +55,7 @@ class Propel14TestSuite extends AbstractTestSuite
 		$book->setTitle('Hello' . $i);
 		$book->setAuthorId($this->authors[array_rand($this->authors)]);
 		$book->setISBN('1234');
+		$book->setPrice($i);
 		$book->save($this->con);
 		$this->books[]= $book->getId();
 	}
@@ -64,12 +65,25 @@ class Propel14TestSuite extends AbstractTestSuite
 		$author = AuthorPeer::retrieveByPk($this->authors[array_rand($this->authors)], $this->con);
 	}
 	
-	function runSearch($i)
+	function runComplexQuery($i)
 	{
 		$c = new Criteria();
-		$c->add(AuthorPeer::ID, $this->authors[array_rand($this->authors)], Criteria::GREATER_THAN);
+		$cton1 = $c->getNewCriterion(AuthorPeer::ID, $this->authors[array_rand($this->authors)], Criteria::GREATER_THAN);
+		$cton2 = $c->getNewCriterion(AuthorPeer::FIRST_NAME, '(' . AuthorPeer::FIRST_NAME . '||' . AuthorPeer::LAST_NAME . ') =' . $this->con->quote('John Doe'), Criteria::CUSTOM);
+		$cton1->addOr($cton2);
+		$c->add($cton1);
 		$c->setLimit(5);
-		$authors = AuthorPeer::doSelect($c, $this->con);
+		AuthorPeer::doCount($c, $this->con);
+	}
+
+	function runHydrate($i)
+	{
+		$c = new Criteria();
+		$c->add(BookPeer::PRICE, $i, Criteria::GREATER_THAN);
+		$c->setLimit(5);
+		$books = BookPeer::doSelect($c, $this->con);
+		foreach ($books as $book) {
+		}
 	}
 	
 	function runJoinSearch($i)

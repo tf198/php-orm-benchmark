@@ -55,6 +55,7 @@ class Propel15TestSuite extends AbstractTestSuite
 		$book->setTitle('Hello' . $i);
 		$book->setAuthorId($this->authors[array_rand($this->authors)]);
 		$book->setISBN('1234');
+		$book->setPrice($i);
 		$book->save($this->con);
 		$this->books[]= $book->getId();
 	}
@@ -65,12 +66,22 @@ class Propel15TestSuite extends AbstractTestSuite
 			->findPk($this->authors[array_rand($this->authors)], $this->con);
 	}
 	
-	function runSearch($i)
+	function runComplexQuery($i)
 	{
 		$authors = AuthorQuery::create()
 			->where('Author.Id > ?', $this->authors[array_rand($this->authors)])
+			->orWhere('(Author.FirstName || Author.LastName) = ?', 'John Doe')
+			->count($this->con);
+	}
+
+	function runHydrate($i)
+	{
+		$books = BookQuery::create()
+			->filterByPrice(array('min' => $i))
 			->limit(5)
 			->find($this->con);
+		foreach ($books as $book) {
+		}
 	}
 	
 	function runJoinSearch($i)
