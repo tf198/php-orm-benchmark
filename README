@@ -23,6 +23,8 @@ Test Scenarii
 
 2. Retrieve By Pk: Tests basic hydration
 
-3. Basic Query with 5 results: Tests Query parsing and collections
+3. Complex Query an OR but no hydration: Tests Query parsing
 
-3. Query with join: Tests join hydration
+4. Basic Query with 5 results: Tests hydration and collections
+
+5. Query with join: Tests join hydration
