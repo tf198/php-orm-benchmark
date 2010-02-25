@@ -32,8 +32,8 @@ class Doctrine12TestSuite extends AbstractTestSuite
 	
 	function clearCache()
 	{
-		// BookPeer::clearInstancePool();
-		// AuthorPeer::clearInstancePool();
+		Doctrine_Core::getTable('Author')->getRepository()->evictAll();
+		Doctrine_Core::getTable('Book')->getRepository()->evictAll();
 	}
 	
 	function beginTransaction()
