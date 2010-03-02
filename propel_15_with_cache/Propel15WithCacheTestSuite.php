@@ -2,13 +2,13 @@
 
 require_once dirname(__FILE__) . '/../AbstractTestSuite.php';
 
-class Propel15TestSuite extends AbstractTestSuite
+class Propel15WithCacheTestSuite extends AbstractTestSuite
 {
 	function initialize()
 	{
 		set_include_path(
 			realpath(dirname(__FILE__) . '/build/classes') . PATH_SEPARATOR .
-			realpath(dirname(__FILE__) . '/vendor/propel/runtime/lib') . PATH_SEPARATOR .
+			realpath(dirname(__FILE__) . '/../propel_15/vendor/propel/runtime/lib') . PATH_SEPARATOR .
 			get_include_path()
 		);
 
@@ -62,20 +62,23 @@ class Propel15TestSuite extends AbstractTestSuite
 	function runPKSearch($i)
 	{
 		$author = AuthorQuery::create()
+			->setQueryKey('a')
 			->findPk($this->authors[array_rand($this->authors)], $this->con);
 	}
 	
 	function runComplexQuery($i)
 	{
-		$authors = AuthorQuery::create()
+		AuthorQuery::create()
+			->setQueryKey(1)
 			->where('Author.Id > ?', $this->authors[array_rand($this->authors)])
-			->orWhere('(Author.FirstName || Author.LastName) = ?', 'John Doe')
+			->orWhere('upper(Author.FirstName) = ?', 'JOHN')
 			->count($this->con);
 	}
 
 	function runHydrate($i)
 	{
 		$books = BookQuery::create()
+			->setQueryKey(2)
 			->filterByPrice(array('min' => $i))
 			->limit(5)
 			->find($this->con);
@@ -86,6 +89,7 @@ class Propel15TestSuite extends AbstractTestSuite
 	function runJoinSearch($i)
 	{
 		$books = BookQuery::create()
+			->setQueryKey(3)
 			->filterByTitle('Hello' . $i)
 			->leftJoinWith('Book.Author')
 			->findOne($this->con);

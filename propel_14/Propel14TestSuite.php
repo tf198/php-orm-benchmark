@@ -20,8 +20,7 @@ class Propel14TestSuite extends AbstractTestSuite
 		Propel::disableInstancePooling();
 		
 		$this->con = Propel::getConnection('bookstore');
-		$schemaSQL = file_get_contents(dirname(__FILE__) . '/build/sql/schema.sql');
-		$this->con->exec($schemaSQL);
+		$this->initTables();
 	}
 	
 	function clearCache()

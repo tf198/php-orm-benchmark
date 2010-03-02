@@ -20,6 +20,31 @@ abstract class AbstractTestSuite
 	abstract function runHydrate($i);
 	abstract function runJoinSearch($i);
 	
+	public function initTables()
+	{
+		try {
+			$this->con->exec('DROP TABLE [book]');
+			$this->con->exec('DROP TABLE [author]');
+		} catch (PDOException $e) {
+			// do nothing - the tables probably don't exist yet
+		}
+		$this->con->exec('CREATE TABLE [book]
+		(
+			[id] INTEGER  NOT NULL PRIMARY KEY,
+			[title] VARCHAR(255)  NOT NULL,
+			[isbn] VARCHAR(24)  NOT NULL,
+			[price] FLOAT,
+			[author_id] INTEGER
+		)');
+		$this->con->exec('CREATE TABLE [author]
+		(
+			[id] INTEGER  NOT NULL PRIMARY KEY,
+			[first_name] VARCHAR(128)  NOT NULL,
+			[last_name] VARCHAR(128)  NOT NULL,
+			[email] VARCHAR(128)
+		)');
+	}
+	
 	public function run()
 	{
 		$t1 =  $this->runTest('runAuthorInsertion', 1600);
