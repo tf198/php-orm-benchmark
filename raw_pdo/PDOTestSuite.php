@@ -7,23 +7,7 @@ class PDOTestSuite extends AbstractTestSuite
 	function initialize()
 	{
 		$this->con = new PDO('sqlite:/tmp/PDOTestSuite.db');
-		$this->con->exec('DROP TABLE [book]');
-		$this->con->exec('DROP TABLE [author]');
-		$this->con->exec('CREATE TABLE [book]
-		(
-			[id] INTEGER  NOT NULL PRIMARY KEY,
-			[title] VARCHAR(255)  NOT NULL,
-			[isbn] VARCHAR(24)  NOT NULL,
-			[price] FLOAT,
-			[author_id] INTEGER
-		)');
-		$this->con->exec('CREATE TABLE [author]
-		(
-			[id] INTEGER  NOT NULL PRIMARY KEY,
-			[first_name] VARCHAR(128)  NOT NULL,
-			[last_name] VARCHAR(128)  NOT NULL,
-			[email] VARCHAR(128)
-		)');
+		$this->initTables();
 	}
 	
 	function clearCache()
@@ -75,7 +59,7 @@ class PDOTestSuite extends AbstractTestSuite
 
 	function runComplexQuery($i)
 	{
-		$query = 'SELECT COUNT(*) FROM author WHERE (author.ID>? OR (author.FIRST_NAME||author.LAST_NAME) = ?)  LIMIT 5';
+		$query = 'SELECT COUNT(*) FROM author WHERE (author.ID>? OR upper(author.FIRST_NAME) = ?)  LIMIT 5';
 		$stmt = $this->con->prepare($query);
 		$stmt->bindParam(1, $this->authors[array_rand($this->authors)], PDO::PARAM_INT);
 		$name = 'John Doe';
