@@ -6,7 +6,7 @@ class PDOTestSuite extends AbstractTestSuite
 {
 	function initialize()
 	{
-		$this->con = new PDO('sqlite:/tmp/PDOTestSuite.db');
+		$this->con = new PDO('sqlite::memory:');
 		$this->initTables();
 	}
 	

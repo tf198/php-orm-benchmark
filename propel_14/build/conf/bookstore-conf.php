@@ -10,7 +10,7 @@ return array (
       'connection' => 
       array (
         'classname' => 'PropelPDO',
-        'dsn' => 'sqlite:/tmp/Propel14TestSuite.db',
+        'dsn' => 'sqlite::memory:',
         'options' => 
         array (
           'ATTR_PERSISTENT' => 
