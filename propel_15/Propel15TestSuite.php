@@ -21,8 +21,6 @@ class Propel15TestSuite extends AbstractTestSuite
 		
 		$this->con = Propel::getConnection('bookstore');
 		$this->initTables();
-		//$this->authors = range(0, 1600);
-		//$this->authors = range(0, 1600);
 	}
 	
 	function clearCache()

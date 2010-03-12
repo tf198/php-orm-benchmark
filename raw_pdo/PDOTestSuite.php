@@ -59,7 +59,7 @@ class PDOTestSuite extends AbstractTestSuite
 
 	function runComplexQuery($i)
 	{
-		$query = 'SELECT COUNT(*) FROM author WHERE (author.ID>? OR upper(author.FIRST_NAME) = ?)  LIMIT 5';
+		$query = 'SELECT COUNT(*) FROM author WHERE (author.ID>? OR (author.FIRST_NAME || author.LAST_NAME) = ?)';
 		$stmt = $this->con->prepare($query);
 		$stmt->bindParam(1, $this->authors[array_rand($this->authors)], PDO::PARAM_INT);
 		$name = 'John Doe';
