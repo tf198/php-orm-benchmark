@@ -14,7 +14,7 @@ class Doctrine12TestSuite extends AbstractTestSuite
 		$this->manager = Doctrine_Manager::getInstance();
 
 		// set connection
-		$this->con = Doctrine_Manager::connection('sqlite:/tmp/Doctrine12TestSuite.db');
+		$this->con = Doctrine_Manager::connection('sqlite::memory:');
 		
 		// setup autoloading
 		$this->manager->setAttribute(Doctrine_Core::ATTR_MODEL_LOADING, Doctrine_Core::MODEL_LOADING_CONSERVATIVE);

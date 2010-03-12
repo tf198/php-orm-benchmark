@@ -6,7 +6,7 @@
 				<adapter>sqlite</adapter>
 				<connection>
 					<classname>PropelPDO</classname>
-					<dsn>sqlite:/tmp/Propel15WithCacheTestSuite.db</dsn>
+					<dsn>sqlite::memory:</dsn>
 					<options>
 						<option id="ATTR_PERSISTENT">false</option>
 					</options>

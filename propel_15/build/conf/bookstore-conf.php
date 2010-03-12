@@ -10,7 +10,7 @@ $conf = array (
       'connection' => 
       array (
         'classname' => 'PropelPDO',
-        'dsn' => 'sqlite:/tmp/Propel15TestSuite.db',
+        'dsn' => 'sqlite::memory:',
         'options' => 
         array (
           'ATTR_PERSISTENT' => 
