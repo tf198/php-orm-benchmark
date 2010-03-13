@@ -47,9 +47,9 @@ abstract class AbstractTestSuite
 	
 	public function run()
 	{
-		$t1 =  $this->runTest('runAuthorInsertion', 1600);
-		$t1 += $this->runTest('runBookInsertion', 1600);
-		$t2 = $this->runTest('runPKSearch', 1800);
+		$t1 =  $this->runTest('runAuthorInsertion', 1700);
+		$t1 += $this->runTest('runBookInsertion', 1700);
+		$t2 = $this->runTest('runPKSearch', 1900);
 		$t3 = $this->runTest('runComplexQuery', 200);
 		$t4 = $this->runTest('runHydrate', 750);
 		$t5 = $this->runTest('runJoinSearch', 700);
@@ -63,7 +63,7 @@ abstract class AbstractTestSuite
 		$this->beginTransaction();
 		$timer = new sfTimer();
 		for($i=0; $i<$nbTest; $i++) {
-			call_user_func($callable, $i);
+			$this->$methodName($i);
 		}
 		$t = $timer->getElapsedTime();
 		$this->commit();
