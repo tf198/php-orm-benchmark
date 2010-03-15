@@ -53,6 +53,29 @@ abstract class BaseBookQuery extends ModelCriteria
 	}
 
 	/**
+	 * Returns a new BookQuery object.
+	 *
+	 * @param     string $modelAlias The alias of a model in the query
+	 * @param     Criteria $criteria Optional Criteria to build the query from
+	 *
+	 * @return    BookQuery
+	 */
+	public static function create($modelAlias = null, $criteria = null)
+	{
+		if ($criteria instanceof BookQuery) {
+			return $criteria;
+		}
+		$query = new BookQuery();
+		if (null !== $modelAlias) {
+			$query->setModelAlias($modelAlias);
+		}
+		if ($criteria instanceof Criteria) {
+			$query->mergeWith($criteria);
+		}
+		return $query;
+	}
+
+	/**
 	 * Find object by primary key
 	 * Use instance pooling to avoid a database query if the object exists
 	 * <code>
@@ -122,15 +145,16 @@ abstract class BaseBookQuery extends ModelCriteria
 	 * 
 	 * @param     int|array $id The value to use as filter.
 	 *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    BookQuery The current query, for fluid interface
 	 */
-	public function filterById($id = null)
+	public function filterById($id = null, $comparison = Criteria::EQUAL)
 	{
 		if (is_array($id)) {
 			return $this->addUsingAlias(BookPeer::ID, $id, Criteria::IN);
 		} else {
-			return $this->addUsingAlias(BookPeer::ID, $id, Criteria::EQUAL);
+			return $this->addUsingAlias(BookPeer::ID, $id, $comparison);
 		}
 	}
 
@@ -139,36 +163,38 @@ abstract class BaseBookQuery extends ModelCriteria
 	 * 
 	 * @param     string $title The value to use as filter.
 	 *            Accepts wildcards (* and % trigger a LIKE)
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    BookQuery The current query, for fluid interface
 	 */
-	public function filterByTitle($title = null)
+	public function filterByTitle($title = null, $comparison = Criteria::EQUAL)
 	{
 		if (is_array($title)) {
 			return $this->addUsingAlias(BookPeer::TITLE, $title, Criteria::IN);
 		} elseif(preg_match('/[\%\*]/', $title)) {
 			return $this->addUsingAlias(BookPeer::TITLE, str_replace('*', '%', $title), Criteria::LIKE);
 		} else {
-			return $this->addUsingAlias(BookPeer::TITLE, $title, Criteria::EQUAL);
+			return $this->addUsingAlias(BookPeer::TITLE, $title, $comparison);
 		}
 	}
 
 	/**
 	 * Filter the query on the isbn column
 	 * 
-	 * @param     string $isbn The value to use as filter.
+	 * @param     string $iSBN The value to use as filter.
 	 *            Accepts wildcards (* and % trigger a LIKE)
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    BookQuery The current query, for fluid interface
 	 */
-	public function filterByISBN($iSBN = null)
+	public function filterByISBN($iSBN = null, $comparison = Criteria::EQUAL)
 	{
 		if (is_array($iSBN)) {
 			return $this->addUsingAlias(BookPeer::ISBN, $iSBN, Criteria::IN);
 		} elseif(preg_match('/[\%\*]/', $iSBN)) {
 			return $this->addUsingAlias(BookPeer::ISBN, str_replace('*', '%', $iSBN), Criteria::LIKE);
 		} else {
-			return $this->addUsingAlias(BookPeer::ISBN, $iSBN, Criteria::EQUAL);
+			return $this->addUsingAlias(BookPeer::ISBN, $iSBN, $comparison);
 		}
 	}
 
@@ -177,10 +203,11 @@ abstract class BaseBookQuery extends ModelCriteria
 	 * 
 	 * @param     double|array $price The value to use as filter.
 	 *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    BookQuery The current query, for fluid interface
 	 */
-	public function filterByPrice($price = null)
+	public function filterByPrice($price = null, $comparison = Criteria::EQUAL)
 	{
 		if (is_array($price)) {
 			if (array_values($price) === $price) {
@@ -195,19 +222,20 @@ abstract class BaseBookQuery extends ModelCriteria
 				return $this;	
 			}
 		} else {
-			return $this->addUsingAlias(BookPeer::PRICE, $price, Criteria::EQUAL);
+			return $this->addUsingAlias(BookPeer::PRICE, $price, $comparison);
 		}
 	}
 
 	/**
 	 * Filter the query on the author_id column
 	 * 
-	 * @param     int|array $author_id The value to use as filter.
+	 * @param     int|array $authorId The value to use as filter.
 	 *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    BookQuery The current query, for fluid interface
 	 */
-	public function filterByAuthorId($authorId = null)
+	public function filterByAuthorId($authorId = null, $comparison = Criteria::EQUAL)
 	{
 		if (is_array($authorId)) {
 			if (array_values($authorId) === $authorId) {
@@ -222,7 +250,7 @@ abstract class BaseBookQuery extends ModelCriteria
 				return $this;	
 			}
 		} else {
-			return $this->addUsingAlias(BookPeer::AUTHOR_ID, $authorId, Criteria::EQUAL);
+			return $this->addUsingAlias(BookPeer::AUTHOR_ID, $authorId, $comparison);
 		}
 	}
 
@@ -230,13 +258,43 @@ abstract class BaseBookQuery extends ModelCriteria
 	 * Filter the query by a related Author object
 	 *
 	 * @param     Author $author  the related object to use as filter
+	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    BookQuery The current query, for fluid interface
 	 */
-	public function filterByAuthor($author)
+	public function filterByAuthor($author, $comparison = Criteria::EQUAL)
 	{
 		return $this
-			->addUsingAlias(BookPeer::AUTHOR_ID, $author->getId(), Criteria::EQUAL);
+			->addUsingAlias(BookPeer::AUTHOR_ID, $author->getId(), $comparison);
+	}
+
+	/**
+	 * Adds a JOIN clause to the query using the Author relation
+	 * 
+	 * @param     string $relationAlias optional alias for the relation
+	 * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+	 *
+	 * @return    BookQuery The current query, for fluid interface
+	 */
+	public function joinAuthor($relationAlias = '', $joinType = Criteria::LEFT_JOIN)
+	{
+		$tableMap = $this->getTableMap();
+		$relationMap = $tableMap->getRelation('Author');
+		
+		// create a ModelJoin object for this join
+		$join = new ModelJoin();
+		$join->setJoinType($joinType);
+		$join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+		
+		// add the ModelJoin to the current object
+		if($relationAlias) {
+			$this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+			$this->addJoinObject($join, $relationAlias);
+		} else {
+			$this->addJoinObject($join, 'Author');
+		}
+		
+		return $this;
 	}
 
 	/**
@@ -250,10 +308,10 @@ abstract class BaseBookQuery extends ModelCriteria
 	 *
 	 * @return    AuthorQuery A secondary query class using the current class as primary query
 	 */
-	public function useAuthorQuery($relationAlias = '', $joinType = Criteria::INNER_JOIN)
+	public function useAuthorQuery($relationAlias = '', $joinType = Criteria::LEFT_JOIN)
 	{
 		return $this
-			->join('Author' . ($relationAlias ? ' ' . $relationAlias : ''), $joinType)
+			->joinAuthor($relationAlias, $joinType)
 			->useQuery($relationAlias ? $relationAlias : 'Author', 'AuthorQuery');
 	}
 

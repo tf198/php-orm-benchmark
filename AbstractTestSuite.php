@@ -50,7 +50,7 @@ abstract class AbstractTestSuite
 		$t1 =  $this->runTest('runAuthorInsertion', 1700);
 		$t1 += $this->runTest('runBookInsertion', 1700);
 		$t2 = $this->runTest('runPKSearch', 1900);
-		$t3 = $this->runTest('runComplexQuery', 200);
+		$t3 = $this->runTest('runComplexQuery', 190);
 		$t4 = $this->runTest('runHydrate', 750);
 		$t5 = $this->runTest('runJoinSearch', 700);
 		echo sprintf("%30s | %6d | %6d | %6d | %6d | %6d |\n", get_class($this), $t1, $t2, $t3, $t4, $t5);
@@ -59,7 +59,6 @@ abstract class AbstractTestSuite
 	public function runTest($methodName, $nbTest = self::NB_TEST)
 	{
 		$this->clearCache();
-		$callable = array($this, $methodName);
 		$this->beginTransaction();
 		$timer = new sfTimer();
 		for($i=0; $i<$nbTest; $i++) {
