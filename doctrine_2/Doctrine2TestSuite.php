@@ -12,9 +12,9 @@ class Doctrine2TestSuite extends AbstractTestSuite
 
     public function initialize()
     {
-        require_once __DIR__ . "/vendor/Doctrine/Common/ClassLoader.php";
+        require_once __DIR__ . "/vendor/doctrine2/Doctrine/Common/ClassLoader.php";
 
-        $loader = new Doctrine\Common\ClassLoader('Doctrine', __DIR__."/vendor");
+        $loader = new Doctrine\Common\ClassLoader('Doctrine', __DIR__."/vendor/doctrine2");
         $loader->register();
 
         $annotationReader = new Doctrine\Common\Annotations\AnnotationReader();
