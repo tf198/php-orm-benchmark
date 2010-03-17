@@ -2,6 +2,10 @@
 
 require_once dirname(__FILE__) . '/../AbstractTestSuite.php';
 
+/**
+ * This test suite just demonstrates the baseline performance without any kind of ORM
+ * or even any other kind of slightest abstraction.
+ */
 class PDOTestSuite extends AbstractTestSuite
 {
 	function initialize()
