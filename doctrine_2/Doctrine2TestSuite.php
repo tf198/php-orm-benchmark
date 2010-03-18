@@ -25,6 +25,7 @@ class Doctrine2TestSuite extends AbstractTestSuite
         $config->setProxyDir(__DIR__ . "/proxies");
         $config->setProxyNamespace('Proxies');
         $config->setMetadataDriverImpl($annotation);
+        //$config->setSqlLogger(new \Doctrine\DBAL\Logging\EchoSqlLogger);
         $config->setAutoGenerateProxyClasses(false); // no code generation in production
 
         $dbParams = array('driver' => 'pdo_sqlite', 'memory' => true);
@@ -90,10 +91,9 @@ class Doctrine2TestSuite extends AbstractTestSuite
     public function runComplexQuery($i)
     {
         $authors = $this->em->createQuery(
-            'SELECT count(a.id) AS num FROM Author a WHERE a.id > ?1 OR (a.firstName = ?2 OR a.lastName = ?3)'
+            'SELECT count(a.id) AS num FROM Author a WHERE a.id > ?1 OR CONCAT(a.firstName, a.lastName) = ?2'
         )->setParameter(1, $this->authors[array_rand($this->authors)]->id)
          ->setParameter(2, 'John Doe')
-         ->setParameter(3, 'John Doe')
          ->setMaxResults(1)
          ->getSingleScalarResult();
     }
@@ -126,5 +126,6 @@ class Doctrine2TestSuite extends AbstractTestSuite
         $author = $this->authors[array_rand($this->authors)];
         
         $author = $this->em->find('Author', $author->id);
+        $this->em->clear();
     }
 }
