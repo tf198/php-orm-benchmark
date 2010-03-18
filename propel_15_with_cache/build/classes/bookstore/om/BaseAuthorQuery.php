@@ -16,6 +16,14 @@
  * @method     AuthorQuery groupByLastName() Group by the last_name column
  * @method     AuthorQuery groupByEmail() Group by the email column
  *
+ * @method     AuthorQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
+ * @method     AuthorQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
+ * @method     AuthorQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ *
+ * @method     AuthorQuery leftJoinBook($relationAlias = '') Adds a LEFT JOIN clause to the query using the Book relation
+ * @method     AuthorQuery rightJoinBook($relationAlias = '') Adds a RIGHT JOIN clause to the query using the Book relation
+ * @method     AuthorQuery innerJoinBook($relationAlias = '') Adds a INNER JOIN clause to the query using the Book relation
+ *
  * @method     Author findOne(PropelPDO $con = null) Return the first Author matching the query
  * @method     Author findOneById(int $id) Return the first Author filtered by the id column
  * @method     Author findOneByFirstName(string $first_name) Return the first Author filtered by the first_name column
@@ -352,10 +360,10 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	
 	protected function getSelectStatement($con = null)
 	{
-		$dbMap = Propel::getDatabaseMap($this->getDbName());
-		$db = Propel::getDB($this->getDbName());
+		$dbMap = Propel::getDatabaseMap(AuthorPeer::DATABASE_NAME);
+		$db = Propel::getDB(AuthorPeer::DATABASE_NAME);
 	  if ($con === null) {
-			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+			$con = Propel::getConnection(AuthorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 		
 		// we may modify criteria, so copy it first

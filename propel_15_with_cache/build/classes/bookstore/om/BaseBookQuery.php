@@ -18,6 +18,14 @@
  * @method     BookQuery groupByPrice() Group by the price column
  * @method     BookQuery groupByAuthorId() Group by the author_id column
  *
+ * @method     BookQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
+ * @method     BookQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
+ * @method     BookQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ *
+ * @method     BookQuery leftJoinAuthor($relationAlias = '') Adds a LEFT JOIN clause to the query using the Author relation
+ * @method     BookQuery rightJoinAuthor($relationAlias = '') Adds a RIGHT JOIN clause to the query using the Author relation
+ * @method     BookQuery innerJoinAuthor($relationAlias = '') Adds a INNER JOIN clause to the query using the Author relation
+ *
  * @method     Book findOne(PropelPDO $con = null) Return the first Book matching the query
  * @method     Book findOneById(int $id) Return the first Book filtered by the id column
  * @method     Book findOneByTitle(string $title) Return the first Book filtered by the title column
@@ -392,10 +400,10 @@ abstract class BaseBookQuery extends ModelCriteria
 	
 	protected function getSelectStatement($con = null)
 	{
-		$dbMap = Propel::getDatabaseMap($this->getDbName());
-		$db = Propel::getDB($this->getDbName());
+		$dbMap = Propel::getDatabaseMap(BookPeer::DATABASE_NAME);
+		$db = Propel::getDB(BookPeer::DATABASE_NAME);
 	  if ($con === null) {
-			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+			$con = Propel::getConnection(BookPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 		
 		// we may modify criteria, so copy it first

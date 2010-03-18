@@ -18,6 +18,14 @@
  * @method     BookQuery groupByPrice() Group by the price column
  * @method     BookQuery groupByAuthorId() Group by the author_id column
  *
+ * @method     BookQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
+ * @method     BookQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
+ * @method     BookQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ *
+ * @method     BookQuery leftJoinAuthor($relationAlias = '') Adds a LEFT JOIN clause to the query using the Author relation
+ * @method     BookQuery rightJoinAuthor($relationAlias = '') Adds a RIGHT JOIN clause to the query using the Author relation
+ * @method     BookQuery innerJoinAuthor($relationAlias = '') Adds a INNER JOIN clause to the query using the Author relation
+ *
  * @method     Book findOne(PropelPDO $con = null) Return the first Book matching the query
  * @method     Book findOneById(int $id) Return the first Book filtered by the id column
  * @method     Book findOneByTitle(string $title) Return the first Book filtered by the title column
