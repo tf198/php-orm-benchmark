@@ -20,6 +20,7 @@ class Propel15WithCacheTestSuite extends AbstractTestSuite
 		Propel::disableInstancePooling();
 		
 		$this->con = Propel::getConnection('bookstore');
+		$this->con->setAttribute(PropelPDO::PROPEL_ATTR_CACHE_PREPARES, true);
 		$this->initTables();
 	}
 	
