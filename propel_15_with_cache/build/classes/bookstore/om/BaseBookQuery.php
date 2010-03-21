@@ -96,7 +96,7 @@ abstract class BaseBookQuery extends ModelCriteria
 	 */
 	public function findPk($key, $con = null)
 	{
-		if ($this->getFormatter()->isObjectFormatter() && (null !== ($obj = BookPeer::getInstanceFromPool((string) $key)))) {
+		if ((null !== ($obj = BookPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter()) {
 			// the object is alredy in the instance pool
 			return $obj;
 		} else {
