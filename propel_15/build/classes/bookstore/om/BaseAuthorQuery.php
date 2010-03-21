@@ -88,7 +88,7 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	 */
 	public function findPk($key, $con = null)
 	{
-		if ($this->getFormatter()->isObjectFormatter() && (null !== ($obj = AuthorPeer::getInstanceFromPool((string) $key)))) {
+		if ((null !== ($obj = AuthorPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter()) {
 			// the object is alredy in the instance pool
 			return $obj;
 		} else {
