@@ -84,7 +84,7 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	 * @param     mixed $key Primary key to use for the query
 	 * @param     PropelPDO $con an optional connection object
 	 *
-	 * @return    mixed the result, formatted by the current formatter
+	 * @return    Author|array|mixed the result, formatted by the current formatter
 	 */
 	public function findPk($key, $con = null)
 	{
@@ -93,9 +93,10 @@ abstract class BaseAuthorQuery extends ModelCriteria
 			return $obj;
 		} else {
 			// the object has not been requested yet, or the formatter is not an object formatter
-			return $this
+			$stmt = $this
 				->filterByPrimaryKey($key)
-				->findOne($con);
+				->getSelectStatement($con);
+			return $this->getFormatter()->formatOne($stmt);
 		}
 	}
 
@@ -107,7 +108,7 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	 * @param     array $keys Primary keys to use for the query
 	 * @param     PropelPDO $con an optional connection object
 	 *
-	 * @return    the list of results, formatted by the current formatter
+	 * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
 	 */
 	public function findPks($keys, $con = null)
 	{	
