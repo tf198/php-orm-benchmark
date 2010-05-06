@@ -905,7 +905,10 @@ abstract class BaseBook extends BaseObject  implements Persistent
 		$this->isbn = null;
 		$this->price = null;
 		$this->author_id = null;
+		$this->alreadyInSave = false;
+		$this->alreadyInValidation = false;
 		$this->clearAllReferences();
+		$this->resetModified();
 		$this->setNew(true);
 	}
 

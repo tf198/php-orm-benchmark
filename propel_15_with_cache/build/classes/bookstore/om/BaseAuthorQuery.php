@@ -97,10 +97,11 @@ abstract class BaseAuthorQuery extends ModelCriteria
 			return $obj;
 		} else {
 			// the object has not been requested yet, or the formatter is not an object formatter
-			$stmt = $this
+			$criteria = $this->isKeepQuery() ? clone $this : $this;
+			$stmt = $criteria
 				->filterByPrimaryKey($key)
 				->getSelectStatement($con);
-			return $this->getFormatter()->formatOne($stmt);
+			return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
 		}
 	}
 
@@ -116,6 +117,7 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	 */
 	public function findPks($keys, $con = null)
 	{	
+		$criteria = $this->isKeepQuery() ? clone $this : $this;
 		return $this
 			->filterByPrimaryKeys($keys)
 			->find($con);
@@ -154,13 +156,12 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	 *
 	 * @return    AuthorQuery The current query, for fluid interface
 	 */
-	public function filterById($id = null, $comparison = Criteria::EQUAL)
+	public function filterById($id = null, $comparison = null)
 	{
-		if (is_array($id)) {
-			return $this->addUsingAlias(AuthorPeer::ID, $id, Criteria::IN);
-		} else {
-			return $this->addUsingAlias(AuthorPeer::ID, $id, $comparison);
+		if (is_array($id) && null === $comparison) {
+			$comparison = Criteria::IN;
 		}
+		return $this->addUsingAlias(AuthorPeer::ID, $id, $comparison);
 	}
 
 	/**
@@ -172,15 +173,19 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	 *
 	 * @return    AuthorQuery The current query, for fluid interface
 	 */
-	public function filterByFirstName($firstName = null, $comparison = Criteria::EQUAL)
+	public function filterByFirstName($firstName = null, $comparison = null)
 	{
 		if (is_array($firstName)) {
-			return $this->addUsingAlias(AuthorPeer::FIRST_NAME, $firstName, Criteria::IN);
-		} elseif(preg_match('/[\%\*]/', $firstName)) {
-			return $this->addUsingAlias(AuthorPeer::FIRST_NAME, str_replace('*', '%', $firstName), Criteria::LIKE);
-		} else {
-			return $this->addUsingAlias(AuthorPeer::FIRST_NAME, $firstName, $comparison);
+			if (null === $comparison) {
+				$comparison = Criteria::IN;
+			}
+		} elseif (preg_match('/[\%\*]/', $firstName)) {
+			$firstName = str_replace('*', '%', $firstName);
+			if (null === $comparison) {
+				$comparison = Criteria::LIKE;
+			}
 		}
+		return $this->addUsingAlias(AuthorPeer::FIRST_NAME, $firstName, $comparison);
 	}
 
 	/**
@@ -192,15 +197,19 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	 *
 	 * @return    AuthorQuery The current query, for fluid interface
 	 */
-	public function filterByLastName($lastName = null, $comparison = Criteria::EQUAL)
+	public function filterByLastName($lastName = null, $comparison = null)
 	{
 		if (is_array($lastName)) {
-			return $this->addUsingAlias(AuthorPeer::LAST_NAME, $lastName, Criteria::IN);
-		} elseif(preg_match('/[\%\*]/', $lastName)) {
-			return $this->addUsingAlias(AuthorPeer::LAST_NAME, str_replace('*', '%', $lastName), Criteria::LIKE);
-		} else {
-			return $this->addUsingAlias(AuthorPeer::LAST_NAME, $lastName, $comparison);
+			if (null === $comparison) {
+				$comparison = Criteria::IN;
+			}
+		} elseif (preg_match('/[\%\*]/', $lastName)) {
+			$lastName = str_replace('*', '%', $lastName);
+			if (null === $comparison) {
+				$comparison = Criteria::LIKE;
+			}
 		}
+		return $this->addUsingAlias(AuthorPeer::LAST_NAME, $lastName, $comparison);
 	}
 
 	/**
@@ -212,15 +221,19 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	 *
 	 * @return    AuthorQuery The current query, for fluid interface
 	 */
-	public function filterByEmail($email = null, $comparison = Criteria::EQUAL)
+	public function filterByEmail($email = null, $comparison = null)
 	{
 		if (is_array($email)) {
-			return $this->addUsingAlias(AuthorPeer::EMAIL, $email, Criteria::IN);
-		} elseif(preg_match('/[\%\*]/', $email)) {
-			return $this->addUsingAlias(AuthorPeer::EMAIL, str_replace('*', '%', $email), Criteria::LIKE);
-		} else {
-			return $this->addUsingAlias(AuthorPeer::EMAIL, $email, $comparison);
+			if (null === $comparison) {
+				$comparison = Criteria::IN;
+			}
+		} elseif (preg_match('/[\%\*]/', $email)) {
+			$email = str_replace('*', '%', $email);
+			if (null === $comparison) {
+				$comparison = Criteria::LIKE;
+			}
 		}
+		return $this->addUsingAlias(AuthorPeer::EMAIL, $email, $comparison);
 	}
 
 	/**
@@ -231,7 +244,7 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	 *
 	 * @return    AuthorQuery The current query, for fluid interface
 	 */
-	public function filterByBook($book, $comparison = Criteria::EQUAL)
+	public function filterByBook($book, $comparison = null)
 	{
 		return $this
 			->addUsingAlias(AuthorPeer::ID, $book->getAuthorId(), $comparison);
@@ -254,6 +267,9 @@ abstract class BaseAuthorQuery extends ModelCriteria
 		$join = new ModelJoin();
 		$join->setJoinType($joinType);
 		$join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+		if ($previousJoin = $this->getPreviousJoin()) {
+			$join->setPreviousJoin($previousJoin);
+		}
 		
 		// add the ModelJoin to the current object
 		if($relationAlias) {
@@ -300,37 +316,6 @@ abstract class BaseAuthorQuery extends ModelCriteria
 		return $this;
 	}
 
-	/**
-	 * Code to execute before every SELECT statement
-	 * 
-	 * @param     PropelPDO $con The connection object used by the query
-	 */
-	protected function basePreSelect(PropelPDO $con)
-	{
-		return $this->preSelect($con);
-	}
-
-	/**
-	 * Code to execute before every DELETE statement
-	 * 
-	 * @param     PropelPDO $con The connection object used by the query
-	 */
-	protected function basePreDelete(PropelPDO $con)
-	{
-		return $this->preDelete($con);
-	}
-
-	/**
-	 * Code to execute before every UPDATE statement
-	 * 
-	 * @param     array $values The associatiove array of columns and values for the update
-	 * @param     PropelPDO $con The connection object used by the query
-	 */
-	protected function basePreUpdate(&$values, PropelPDO $con)
-	{
-		return $this->preUpdate($values, $con);
-	}
-
 	// query_cache behavior
 	
 	public function setQueryKey($key)
@@ -367,25 +352,22 @@ abstract class BaseAuthorQuery extends ModelCriteria
 			$con = Propel::getConnection(AuthorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 		
-		// we may modify criteria, so copy it first
-		$criteria = clone $this;
-	
-		if (!$criteria->hasSelectClause()) {
-			$criteria->addSelfSelectColumns();
+		if (!$this->hasSelectClause()) {
+			$this->addSelfSelectColumns();
 		}
 		
 		$con->beginTransaction();
 		try {
-			$criteria->basePreSelect($con);
-			$key = $criteria->getQueryKey();
-			if ($key && $criteria->cacheContains($key)) {
-				$params = $criteria->getParams();
-				$sql = $criteria->cacheFetch($key);
+			$this->basePreSelect($con);
+			$key = $this->getQueryKey();
+			if ($key && $this->cacheContains($key)) {
+				$params = $this->getParams();
+				$sql = $this->cacheFetch($key);
 			} else {
 				$params = array();
-				$sql = BasePeer::createSelectSql($criteria, $params);
+				$sql = BasePeer::createSelectSql($this, $params);
 				if ($key) {
-					$criteria->cacheStore($key, $sql);
+					$this->cacheStore($key, $sql);
 				}
 			}
 			$stmt = $con->prepare($sql);
@@ -397,6 +379,61 @@ abstract class BaseAuthorQuery extends ModelCriteria
 			throw $e;
 		}
 		
+		return $stmt;
+	}
+	
+	protected function getCountStatement($con = null)
+	{
+		$dbMap = Propel::getDatabaseMap($this->getDbName());
+		$db = Propel::getDB($this->getDbName());
+	  if ($con === null) {
+			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+		}
+	
+		$con->beginTransaction();
+		try {
+			$this->basePreSelect($con);
+			$key = $this->getQueryKey();
+			if ($key && $this->cacheContains($key)) {
+				$params = $this->getParams();
+				$sql = $this->cacheFetch($key);
+			} else {
+				if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
+					$this->addSelfSelectColumns();
+				}
+				$params = array();
+				$needsComplexCount = $this->getGroupByColumns() 
+					|| $this->getOffset()
+					|| $this->getLimit() 
+					|| $this->getHaving() 
+					|| in_array(Criteria::DISTINCT, $this->getSelectModifiers());
+				if ($needsComplexCount) {
+					if (self::needsSelectAliases($criteria)) {
+						if ($this->getHaving()) {
+							throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
+						}
+						BasePeer::turnSelectColumnsToAliases($this);
+					}
+					$selectSql = BasePeer::createSelectSql($this, $params);
+					$sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') propelmatch4cnt';
+				} else {
+					// Replace SELECT columns with COUNT(*)
+					$this->clearSelectColumns()->addSelectColumn('COUNT(*)');
+					$sql = BasePeer::createSelectSql($this, $params);
+				}
+				if ($key) {
+					$this->cacheStore($key, $sql);
+				}
+			}
+			$stmt = $con->prepare($sql);
+			BasePeer::populateStmtValues($stmt, $params, $dbMap, $db);
+			$stmt->execute();
+			$con->commit();
+		} catch (PropelException $e) {
+			$con->rollback();
+			throw $e;
+		}
+	
 		return $stmt;
 	}
 
