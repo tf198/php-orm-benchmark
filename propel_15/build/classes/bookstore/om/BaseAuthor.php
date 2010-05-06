@@ -831,8 +831,8 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 	 * If this Author is new, it will return
 	 * an empty collection or the current collection; the criteria is ignored on a new object.
 	 *
-	 * @param      Criteria $criteria
-	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria optional Criteria object to narrow the query
+	 * @param      PropelPDO $con optional connection object
 	 * @return     PropelCollection|array Book[] List of Book objects
 	 * @throws     PropelException
 	 */
@@ -911,7 +911,10 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 		$this->first_name = null;
 		$this->last_name = null;
 		$this->email = null;
+		$this->alreadyInSave = false;
+		$this->alreadyInValidation = false;
 		$this->clearAllReferences();
+		$this->resetModified();
 		$this->setNew(true);
 	}
 

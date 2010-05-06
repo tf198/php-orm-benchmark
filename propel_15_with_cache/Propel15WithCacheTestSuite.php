@@ -72,7 +72,7 @@ class Propel15WithCacheTestSuite extends AbstractTestSuite
 		AuthorQuery::create()
 			->setQueryKey(1)
 			->where('Author.Id > ?', $this->authors[array_rand($this->authors)])
-			->orWhere('upper(Author.FirstName) = ?', 'JOHN')
+			->orWhere('(Author.FirstName || Author.LastName) = ?', 'John Doe')
 			->count($this->con);
 	}
 

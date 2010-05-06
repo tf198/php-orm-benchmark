@@ -101,10 +101,11 @@ abstract class BaseBookQuery extends ModelCriteria
 			return $obj;
 		} else {
 			// the object has not been requested yet, or the formatter is not an object formatter
-			$stmt = $this
+			$criteria = $this->isKeepQuery() ? clone $this : $this;
+			$stmt = $criteria
 				->filterByPrimaryKey($key)
 				->getSelectStatement($con);
-			return $this->getFormatter()->formatOne($stmt);
+			return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
 		}
 	}
 
@@ -120,6 +121,7 @@ abstract class BaseBookQuery extends ModelCriteria
 	 */
 	public function findPks($keys, $con = null)
 	{	
+		$criteria = $this->isKeepQuery() ? clone $this : $this;
 		return $this
 			->filterByPrimaryKeys($keys)
 			->find($con);
@@ -158,13 +160,12 @@ abstract class BaseBookQuery extends ModelCriteria
 	 *
 	 * @return    BookQuery The current query, for fluid interface
 	 */
-	public function filterById($id = null, $comparison = Criteria::EQUAL)
+	public function filterById($id = null, $comparison = null)
 	{
-		if (is_array($id)) {
-			return $this->addUsingAlias(BookPeer::ID, $id, Criteria::IN);
-		} else {
-			return $this->addUsingAlias(BookPeer::ID, $id, $comparison);
+		if (is_array($id) && null === $comparison) {
+			$comparison = Criteria::IN;
 		}
+		return $this->addUsingAlias(BookPeer::ID, $id, $comparison);
 	}
 
 	/**
@@ -176,15 +177,19 @@ abstract class BaseBookQuery extends ModelCriteria
 	 *
 	 * @return    BookQuery The current query, for fluid interface
 	 */
-	public function filterByTitle($title = null, $comparison = Criteria::EQUAL)
+	public function filterByTitle($title = null, $comparison = null)
 	{
 		if (is_array($title)) {
-			return $this->addUsingAlias(BookPeer::TITLE, $title, Criteria::IN);
-		} elseif(preg_match('/[\%\*]/', $title)) {
-			return $this->addUsingAlias(BookPeer::TITLE, str_replace('*', '%', $title), Criteria::LIKE);
-		} else {
-			return $this->addUsingAlias(BookPeer::TITLE, $title, $comparison);
+			if (null === $comparison) {
+				$comparison = Criteria::IN;
+			}
+		} elseif (preg_match('/[\%\*]/', $title)) {
+			$title = str_replace('*', '%', $title);
+			if (null === $comparison) {
+				$comparison = Criteria::LIKE;
+			}
 		}
+		return $this->addUsingAlias(BookPeer::TITLE, $title, $comparison);
 	}
 
 	/**
@@ -196,15 +201,19 @@ abstract class BaseBookQuery extends ModelCriteria
 	 *
 	 * @return    BookQuery The current query, for fluid interface
 	 */
-	public function filterByISBN($iSBN = null, $comparison = Criteria::EQUAL)
+	public function filterByISBN($iSBN = null, $comparison = null)
 	{
 		if (is_array($iSBN)) {
-			return $this->addUsingAlias(BookPeer::ISBN, $iSBN, Criteria::IN);
-		} elseif(preg_match('/[\%\*]/', $iSBN)) {
-			return $this->addUsingAlias(BookPeer::ISBN, str_replace('*', '%', $iSBN), Criteria::LIKE);
-		} else {
-			return $this->addUsingAlias(BookPeer::ISBN, $iSBN, $comparison);
+			if (null === $comparison) {
+				$comparison = Criteria::IN;
+			}
+		} elseif (preg_match('/[\%\*]/', $iSBN)) {
+			$iSBN = str_replace('*', '%', $iSBN);
+			if (null === $comparison) {
+				$comparison = Criteria::LIKE;
+			}
 		}
+		return $this->addUsingAlias(BookPeer::ISBN, $iSBN, $comparison);
 	}
 
 	/**
@@ -216,23 +225,26 @@ abstract class BaseBookQuery extends ModelCriteria
 	 *
 	 * @return    BookQuery The current query, for fluid interface
 	 */
-	public function filterByPrice($price = null, $comparison = Criteria::EQUAL)
+	public function filterByPrice($price = null, $comparison = null)
 	{
 		if (is_array($price)) {
-			if (array_values($price) === $price) {
-				return $this->addUsingAlias(BookPeer::PRICE, $price, Criteria::IN);
-			} else {
-				if (isset($price['min'])) {
-					$this->addUsingAlias(BookPeer::PRICE, $price['min'], Criteria::GREATER_EQUAL);
-				}
-				if (isset($price['max'])) {
-					$this->addUsingAlias(BookPeer::PRICE, $price['max'], Criteria::LESS_EQUAL);
-				}
-				return $this;	
+			$useMinMax = false;
+			if (isset($price['min'])) {
+				$this->addUsingAlias(BookPeer::PRICE, $price['min'], Criteria::GREATER_EQUAL);
+				$useMinMax = true;
 			}
-		} else {
-			return $this->addUsingAlias(BookPeer::PRICE, $price, $comparison);
+			if (isset($price['max'])) {
+				$this->addUsingAlias(BookPeer::PRICE, $price['max'], Criteria::LESS_EQUAL);
+				$useMinMax = true;
+			}
+			if ($useMinMax) {
+				return $this;
+			}
+			if (null === $comparison) {
+				$comparison = Criteria::IN;
+			}
 		}
+		return $this->addUsingAlias(BookPeer::PRICE, $price, $comparison);
 	}
 
 	/**
@@ -244,23 +256,26 @@ abstract class BaseBookQuery extends ModelCriteria
 	 *
 	 * @return    BookQuery The current query, for fluid interface
 	 */
-	public function filterByAuthorId($authorId = null, $comparison = Criteria::EQUAL)
+	public function filterByAuthorId($authorId = null, $comparison = null)
 	{
 		if (is_array($authorId)) {
-			if (array_values($authorId) === $authorId) {
-				return $this->addUsingAlias(BookPeer::AUTHOR_ID, $authorId, Criteria::IN);
-			} else {
-				if (isset($authorId['min'])) {
-					$this->addUsingAlias(BookPeer::AUTHOR_ID, $authorId['min'], Criteria::GREATER_EQUAL);
-				}
-				if (isset($authorId['max'])) {
-					$this->addUsingAlias(BookPeer::AUTHOR_ID, $authorId['max'], Criteria::LESS_EQUAL);
-				}
-				return $this;	
+			$useMinMax = false;
+			if (isset($authorId['min'])) {
+				$this->addUsingAlias(BookPeer::AUTHOR_ID, $authorId['min'], Criteria::GREATER_EQUAL);
+				$useMinMax = true;
 			}
-		} else {
-			return $this->addUsingAlias(BookPeer::AUTHOR_ID, $authorId, $comparison);
+			if (isset($authorId['max'])) {
+				$this->addUsingAlias(BookPeer::AUTHOR_ID, $authorId['max'], Criteria::LESS_EQUAL);
+				$useMinMax = true;
+			}
+			if ($useMinMax) {
+				return $this;
+			}
+			if (null === $comparison) {
+				$comparison = Criteria::IN;
+			}
 		}
+		return $this->addUsingAlias(BookPeer::AUTHOR_ID, $authorId, $comparison);
 	}
 
 	/**
@@ -271,7 +286,7 @@ abstract class BaseBookQuery extends ModelCriteria
 	 *
 	 * @return    BookQuery The current query, for fluid interface
 	 */
-	public function filterByAuthor($author, $comparison = Criteria::EQUAL)
+	public function filterByAuthor($author, $comparison = null)
 	{
 		return $this
 			->addUsingAlias(BookPeer::AUTHOR_ID, $author->getId(), $comparison);
@@ -294,6 +309,9 @@ abstract class BaseBookQuery extends ModelCriteria
 		$join = new ModelJoin();
 		$join->setJoinType($joinType);
 		$join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+		if ($previousJoin = $this->getPreviousJoin()) {
+			$join->setPreviousJoin($previousJoin);
+		}
 		
 		// add the ModelJoin to the current object
 		if($relationAlias) {
@@ -340,37 +358,6 @@ abstract class BaseBookQuery extends ModelCriteria
 		return $this;
 	}
 
-	/**
-	 * Code to execute before every SELECT statement
-	 * 
-	 * @param     PropelPDO $con The connection object used by the query
-	 */
-	protected function basePreSelect(PropelPDO $con)
-	{
-		return $this->preSelect($con);
-	}
-
-	/**
-	 * Code to execute before every DELETE statement
-	 * 
-	 * @param     PropelPDO $con The connection object used by the query
-	 */
-	protected function basePreDelete(PropelPDO $con)
-	{
-		return $this->preDelete($con);
-	}
-
-	/**
-	 * Code to execute before every UPDATE statement
-	 * 
-	 * @param     array $values The associatiove array of columns and values for the update
-	 * @param     PropelPDO $con The connection object used by the query
-	 */
-	protected function basePreUpdate(&$values, PropelPDO $con)
-	{
-		return $this->preUpdate($values, $con);
-	}
-
 	// query_cache behavior
 	
 	public function setQueryKey($key)
@@ -407,25 +394,22 @@ abstract class BaseBookQuery extends ModelCriteria
 			$con = Propel::getConnection(BookPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 		
-		// we may modify criteria, so copy it first
-		$criteria = clone $this;
-	
-		if (!$criteria->hasSelectClause()) {
-			$criteria->addSelfSelectColumns();
+		if (!$this->hasSelectClause()) {
+			$this->addSelfSelectColumns();
 		}
 		
 		$con->beginTransaction();
 		try {
-			$criteria->basePreSelect($con);
-			$key = $criteria->getQueryKey();
-			if ($key && $criteria->cacheContains($key)) {
-				$params = $criteria->getParams();
-				$sql = $criteria->cacheFetch($key);
+			$this->basePreSelect($con);
+			$key = $this->getQueryKey();
+			if ($key && $this->cacheContains($key)) {
+				$params = $this->getParams();
+				$sql = $this->cacheFetch($key);
 			} else {
 				$params = array();
-				$sql = BasePeer::createSelectSql($criteria, $params);
+				$sql = BasePeer::createSelectSql($this, $params);
 				if ($key) {
-					$criteria->cacheStore($key, $sql);
+					$this->cacheStore($key, $sql);
 				}
 			}
 			$stmt = $con->prepare($sql);
@@ -437,6 +421,61 @@ abstract class BaseBookQuery extends ModelCriteria
 			throw $e;
 		}
 		
+		return $stmt;
+	}
+	
+	protected function getCountStatement($con = null)
+	{
+		$dbMap = Propel::getDatabaseMap($this->getDbName());
+		$db = Propel::getDB($this->getDbName());
+	  if ($con === null) {
+			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+		}
+	
+		$con->beginTransaction();
+		try {
+			$this->basePreSelect($con);
+			$key = $this->getQueryKey();
+			if ($key && $this->cacheContains($key)) {
+				$params = $this->getParams();
+				$sql = $this->cacheFetch($key);
+			} else {
+				if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
+					$this->addSelfSelectColumns();
+				}
+				$params = array();
+				$needsComplexCount = $this->getGroupByColumns() 
+					|| $this->getOffset()
+					|| $this->getLimit() 
+					|| $this->getHaving() 
+					|| in_array(Criteria::DISTINCT, $this->getSelectModifiers());
+				if ($needsComplexCount) {
+					if (self::needsSelectAliases($criteria)) {
+						if ($this->getHaving()) {
+							throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
+						}
+						BasePeer::turnSelectColumnsToAliases($this);
+					}
+					$selectSql = BasePeer::createSelectSql($this, $params);
+					$sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') propelmatch4cnt';
+				} else {
+					// Replace SELECT columns with COUNT(*)
+					$this->clearSelectColumns()->addSelectColumn('COUNT(*)');
+					$sql = BasePeer::createSelectSql($this, $params);
+				}
+				if ($key) {
+					$this->cacheStore($key, $sql);
+				}
+			}
+			$stmt = $con->prepare($sql);
+			BasePeer::populateStmtValues($stmt, $params, $dbMap, $db);
+			$stmt->execute();
+			$con->commit();
+		} catch (PropelException $e) {
+			$con->rollback();
+			throw $e;
+		}
+	
 		return $stmt;
 	}
 
