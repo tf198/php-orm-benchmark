@@ -408,7 +408,7 @@ abstract class BaseAuthorQuery extends ModelCriteria
 					|| $this->getHaving() 
 					|| in_array(Criteria::DISTINCT, $this->getSelectModifiers());
 				if ($needsComplexCount) {
-					if (self::needsSelectAliases($criteria)) {
+					if (BasePeer::needsSelectAliases($this)) {
 						if ($this->getHaving()) {
 							throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
 						}
