@@ -152,8 +152,17 @@ abstract class BaseBookQuery extends ModelCriteria
 	/**
 	 * Filter the query on the id column
 	 * 
-	 * @param     int|array $id The value to use as filter.
-	 *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
+	 * Example usage:
+	 * <code>
+	 * $query->filterById(1234); // WHERE id = 1234
+	 * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
+	 * $query->filterById(array('min' => 12)); // WHERE id > 12
+	 * </code>
+	 *
+	 * @param     mixed $id The value to use as filter.
+	 *              Use scalar values for equality.
+	 *              Use array values for in_array() equivalent.
+	 *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    BookQuery The current query, for fluid interface
@@ -169,8 +178,14 @@ abstract class BaseBookQuery extends ModelCriteria
 	/**
 	 * Filter the query on the title column
 	 * 
+	 * Example usage:
+	 * <code>
+	 * $query->filterByTitle('fooValue');   // WHERE title = 'fooValue'
+	 * $query->filterByTitle('%fooValue%'); // WHERE title LIKE '%fooValue%'
+	 * </code>
+	 *
 	 * @param     string $title The value to use as filter.
-	 *            Accepts wildcards (* and % trigger a LIKE)
+	 *              Accepts wildcards (* and % trigger a LIKE)
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    BookQuery The current query, for fluid interface
@@ -191,8 +206,14 @@ abstract class BaseBookQuery extends ModelCriteria
 	/**
 	 * Filter the query on the isbn column
 	 * 
+	 * Example usage:
+	 * <code>
+	 * $query->filterByISBN('fooValue');   // WHERE isbn = 'fooValue'
+	 * $query->filterByISBN('%fooValue%'); // WHERE isbn LIKE '%fooValue%'
+	 * </code>
+	 *
 	 * @param     string $iSBN The value to use as filter.
-	 *            Accepts wildcards (* and % trigger a LIKE)
+	 *              Accepts wildcards (* and % trigger a LIKE)
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    BookQuery The current query, for fluid interface
@@ -213,8 +234,17 @@ abstract class BaseBookQuery extends ModelCriteria
 	/**
 	 * Filter the query on the price column
 	 * 
-	 * @param     double|array $price The value to use as filter.
-	 *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
+	 * Example usage:
+	 * <code>
+	 * $query->filterByPrice(1234); // WHERE price = 1234
+	 * $query->filterByPrice(array(12, 34)); // WHERE price IN (12, 34)
+	 * $query->filterByPrice(array('min' => 12)); // WHERE price > 12
+	 * </code>
+	 *
+	 * @param     mixed $price The value to use as filter.
+	 *              Use scalar values for equality.
+	 *              Use array values for in_array() equivalent.
+	 *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    BookQuery The current query, for fluid interface
@@ -244,8 +274,19 @@ abstract class BaseBookQuery extends ModelCriteria
 	/**
 	 * Filter the query on the author_id column
 	 * 
-	 * @param     int|array $authorId The value to use as filter.
-	 *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
+	 * Example usage:
+	 * <code>
+	 * $query->filterByAuthorId(1234); // WHERE author_id = 1234
+	 * $query->filterByAuthorId(array(12, 34)); // WHERE author_id IN (12, 34)
+	 * $query->filterByAuthorId(array('min' => 12)); // WHERE author_id > 12
+	 * </code>
+	 *
+	 * @see       filterByAuthor()
+	 *
+	 * @param     mixed $authorId The value to use as filter.
+	 *              Use scalar values for equality.
+	 *              Use array values for in_array() equivalent.
+	 *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    BookQuery The current query, for fluid interface
