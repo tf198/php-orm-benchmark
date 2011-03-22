@@ -54,7 +54,8 @@ abstract class AbstractTestSuite
 		$t4 = $this->runTest('runHydrate', 750);
 		$t5 = $this->runTest('runJoinSearch', 700);
     $mem = memory_get_peak_usage() / (1024*1024);
-		echo sprintf("%25s | %6d | %6d | %6d | %6d | %6d | %6.2f\n", get_class($this), $t1, $t2, $t3, $t4, $t5, $mem);
+		echo sprintf("%20s | %6d | %6d | %6d | %6d | %6d | %6.2f |\n", 
+      substr(get_class($this), 0, -9), $t1, $t2, $t3, $t4, $t5, $mem);
 	}
 	
 	public function runTest($methodName, $nbTest = self::NB_TEST)
