@@ -47,15 +47,16 @@ abstract class AbstractTestSuite
 	
 	public function run()
 	{
-		$t1 =  $this->runTest('runAuthorInsertion', 1700);
-		$t1 += $this->runTest('runBookInsertion', 1700);
-		$t2 = $this->runTest('runPKSearch', 1900);
-		$t3 = $this->runTest('runComplexQuery', 190);
-		$t4 = $this->runTest('runHydrate', 750);
-		$t5 = $this->runTest('runJoinSearch', 700);
+    $config = include dirname(__FILE__) . '/config.php';
+    
+    $t = array();
+    $tests = array_keys($config);
+    for($i=0; $i<count($tests); $i++) {
+      $t[$i] = $this->runTest($tests[$i], $config[$tests[$i]]);
+    }
     $mem = memory_get_peak_usage() / (1024*1024);
 		echo sprintf("%20s | %6d | %6d | %6d | %6d | %6d | %6.2f |\n", 
-      substr(get_class($this), 0, -9), $t1, $t2, $t3, $t4, $t5, $mem);
+      substr(get_class($this), 0, -9), $t[0]+$t[1], $t[2], $t[3], $t[4], $t[5], $mem);
 	}
 	
 	public function runTest($methodName, $nbTest = self::NB_TEST)
