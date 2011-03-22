@@ -4,6 +4,7 @@ echo "                               | Insert | findPk | complex| hydrate|  with
 echo "                               |--------|--------|--------|--------|--------|\n";
 
 passthru('php raw_pdo/TestRunner.php');
+passthru('php dormio_01/OptTestRunner.php');
 passthru('php dormio_01/TestRunner.php');
 passthru('php propel_14/TestRunner.php');
 passthru('php propel_15/TestRunner.php');

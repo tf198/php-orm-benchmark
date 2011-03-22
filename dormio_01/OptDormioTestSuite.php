@@ -10,11 +10,12 @@ class OptDormioTestSuite extends AbstractTestSuite
 {
 	function initialize()
 	{
-		$this->con = new PDO('sqlite::memory:');
-    $this->initTables();
     
-    require('bantam/modules/dormio/classes/dormio/autoload.php');
+    require('vendor/dormio/classes/dormio/autoload.php');
     require('models.php');
+    
+    $this->con = Dormio_Factory::PDO(array('connection' => 'sqlite::memory:'));
+    $this->initTables();
     
     $dormio = new Dormio_Factory($this->con);
     
