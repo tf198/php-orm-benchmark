@@ -9,7 +9,7 @@ class Doctrine12TestSuite extends AbstractTestSuite
 	function initialize()
 	{
 		// bootstrap Doctrine
-		require_once(dirname(__FILE__) . '/vendor/doctrine/Doctrine.php');
+		require_once(dirname(__FILE__) . '/vendor/doctrine/lib/Doctrine.php');
 		spl_autoload_register(array('Doctrine', 'autoload'));
 		$this->manager = Doctrine_Manager::getInstance();
 

@@ -7,3 +7,6 @@
 [submodule "dormio_01/vendor/dormio"]
 	path = dormio_01/vendor/dormio
 	url = git://github.com/tf198/dormio.git
+[submodule "doctrine_12/vendor/doctrine"]
+	path = doctrine_12/vendor/doctrine
+	url = git://github.com/doctrine/doctrine1.git
