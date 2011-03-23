@@ -5,10 +5,12 @@ echo "                     |--------|--------|--------|--------|--------|-------
 
 passthru('php raw_pdo/OptTestRunner.php');
 passthru('php raw_pdo/TestRunner.php');
+
 if(file_exists('dormio_01/vendor/dormio/classes')) {
   passthru('php dormio_01/OptTestRunner.php');
   passthru('php dormio_01/TestRunner.php');
 }
+
 if(file_exists('outlet_07/vendor/outlet/classes')) {
   passthru('php outlet_07/TestRunner.php');
 }
