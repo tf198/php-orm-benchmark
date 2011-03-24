@@ -12,6 +12,7 @@ class DormioTestSuite extends AbstractTestSuite
 	{
     
     require_once dirname(__FILE__) . '/vendor/dormio/classes/dormio/autoload.php';
+    Dormio_Autoload::register();
     require_once 'models.php';
     
     $this->con = Dormio_Factory::PDO(array('connection' => 'sqlite::memory:'));
