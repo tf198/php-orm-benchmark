@@ -10,7 +10,7 @@ class Book extends Dormio_Model {
       'author' => array('type' => 'foreignkey', 'model' => 'Author'),
     ),
   );
-  static function getMeta() { return self::$meta; }
+  //static function getMeta() { return self::$meta; }
 }
 
 class Author extends Dormio_Model {
@@ -23,6 +23,6 @@ class Author extends Dormio_Model {
       'books' => array('type' => 'reverse', 'model' => 'Book'),
     ),
   );
-  static function getMeta() { return self::$meta; }
+  //static function getMeta() { return self::$meta; }
 }
 ?>

@@ -12,7 +12,7 @@ class Outlet07TestSuite extends AbstractTestSuite
 	{
     
     require_once('models.php');
-    require_once('outlet/classes/outlet/Outlet.php');
+    require_once('vendor/outlet/classes/outlet/Outlet.php');
     
     $config = include('config.php');
     
