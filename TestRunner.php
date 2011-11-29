@@ -27,4 +27,8 @@ if(file_exists('propel_15/vendor/propel/runtime')) {
 if(file_exists('doctrine_12/vendor/doctrine/lib')) {
   passthru('php doctrine_12/TestRunner.php');
 }
-//passthru('php doctrine_2/TestRunner.php');
+
+// only PHP 5.3
+if(substr(phpversion(), 0, 3)=='5.3' && file_exists('doctrine_2/vendor/doctrine/lib')) {
+  passthru('php doctrine_2/TestRunner.php');
+}

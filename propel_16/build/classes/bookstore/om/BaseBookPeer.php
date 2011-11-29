@@ -31,6 +31,9 @@ abstract class BaseBookPeer {
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
 
+	/** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+	const NUM_HYDRATE_COLUMNS = 5;
+
 	/** the column name for the ID field */
 	const ID = 'book.ID';
 
@@ -46,6 +49,9 @@ abstract class BaseBookPeer {
 	/** the column name for the AUTHOR_ID field */
 	const AUTHOR_ID = 'book.AUTHOR_ID';
 
+	/** The default string format for model objects of the related table **/
+	const DEFAULT_STRING_FORMAT = 'YAML';
+	
 	/**
 	 * An identiy map to hold any loaded instances of Book objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -61,7 +67,7 @@ abstract class BaseBookPeer {
 	 * first dimension keys are the type constants
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
-	private static $fieldNames = array (
+	protected static $fieldNames = array (
 		BasePeer::TYPE_PHPNAME => array ('Id', 'Title', 'ISBN', 'Price', 'AuthorId', ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'title', 'iSBN', 'price', 'authorId', ),
 		BasePeer::TYPE_COLNAME => array (self::ID, self::TITLE, self::ISBN, self::PRICE, self::AUTHOR_ID, ),
@@ -76,7 +82,7 @@ abstract class BaseBookPeer {
 	 * first dimension keys are the type constants
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
-	private static $fieldKeys = array (
+	protected static $fieldKeys = array (
 		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Title' => 1, 'ISBN' => 2, 'Price' => 3, 'AuthorId' => 4, ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'title' => 1, 'iSBN' => 2, 'price' => 3, 'authorId' => 4, ),
 		BasePeer::TYPE_COLNAME => array (self::ID => 0, self::TITLE => 1, self::ISBN => 2, self::PRICE => 3, self::AUTHOR_ID => 4, ),
@@ -285,7 +291,7 @@ abstract class BaseBookPeer {
 	 * @param      Book $value A Book object.
 	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
 	 */
-	public static function addInstanceToPool(Book $obj, $key = null)
+	public static function addInstanceToPool($obj, $key = null)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
@@ -440,7 +446,7 @@ abstract class BaseBookPeer {
 			// We no longer rehydrate the object, since this can cause data loss.
 			// See http://www.propelorm.org/ticket/509
 			// $obj->hydrate($row, $startcol, true); // rehydrate
-			$col = $startcol + BookPeer::NUM_COLUMNS;
+			$col = $startcol + BookPeer::NUM_HYDRATE_COLUMNS;
 		} else {
 			$cls = BookPeer::OM_CLASS;
 			$obj = new $cls();
@@ -519,7 +525,7 @@ abstract class BaseBookPeer {
 		}
 
 		BookPeer::addSelectColumns($criteria);
-		$startcol = (BookPeer::NUM_COLUMNS - BookPeer::NUM_LAZY_LOAD_COLUMNS);
+		$startcol = BookPeer::NUM_HYDRATE_COLUMNS;
 		AuthorPeer::addSelectColumns($criteria);
 
 		$criteria->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, $join_behavior);
@@ -635,10 +641,10 @@ abstract class BaseBookPeer {
 		}
 
 		BookPeer::addSelectColumns($criteria);
-		$startcol2 = (BookPeer::NUM_COLUMNS - BookPeer::NUM_LAZY_LOAD_COLUMNS);
+		$startcol2 = BookPeer::NUM_HYDRATE_COLUMNS;
 
 		AuthorPeer::addSelectColumns($criteria);
-		$startcol3 = $startcol2 + (AuthorPeer::NUM_COLUMNS - AuthorPeer::NUM_LAZY_LOAD_COLUMNS);
+		$startcol3 = $startcol2 + AuthorPeer::NUM_HYDRATE_COLUMNS;
 
 		$criteria->addJoin(BookPeer::AUTHOR_ID, AuthorPeer::ID, $join_behavior);
 
@@ -904,7 +910,7 @@ abstract class BaseBookPeer {
 	 *
 	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate(Book $obj, $cols = null)
+	public static function doValidate($obj, $cols = null)
 	{
 		$columns = array();
 
