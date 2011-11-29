@@ -3,7 +3,7 @@
 
 
 /**
- * This class defines the structure of the 'author' table.
+ * This class defines the structure of the 'book' table.
  *
  *
  *
@@ -14,12 +14,12 @@
  *
  * @package    propel.generator.bookstore.map
  */
-class AuthorTableMap extends TableMap {
+class BookTableMap extends TableMap {
 
 	/**
 	 * The (dot-path) name of this class
 	 */
-	const CLASS_NAME = 'bookstore.map.AuthorTableMap';
+	const CLASS_NAME = 'bookstore.map.BookTableMap';
 
 	/**
 	 * Initialize the table attributes, columns and validators
@@ -31,16 +31,18 @@ class AuthorTableMap extends TableMap {
 	public function initialize()
 	{
 	  // attributes
-		$this->setName('author');
-		$this->setPhpName('Author');
-		$this->setClassname('Author');
+		$this->setName('book');
+		$this->setPhpName('Book');
+		$this->setClassname('Book');
 		$this->setPackage('bookstore');
 		$this->setUseIdGenerator(true);
 		// columns
 		$this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-		$this->addColumn('FIRST_NAME', 'FirstName', 'VARCHAR', true, 128, null);
-		$this->addColumn('LAST_NAME', 'LastName', 'VARCHAR', true, 128, null);
-		$this->addColumn('EMAIL', 'Email', 'VARCHAR', false, 128, null);
+		$this->addColumn('TITLE', 'Title', 'VARCHAR', true, 255, null);
+		$this->getColumn('TITLE', false)->setPrimaryString(true);
+		$this->addColumn('ISBN', 'ISBN', 'VARCHAR', true, 24, null);
+		$this->addColumn('PRICE', 'Price', 'FLOAT', false, null, null);
+		$this->addForeignKey('AUTHOR_ID', 'AuthorId', 'INTEGER', 'author', 'ID', false, null, null);
 		// validators
 	} // initialize()
 
@@ -49,7 +51,7 @@ class AuthorTableMap extends TableMap {
 	 */
 	public function buildRelations()
 	{
-    $this->addRelation('Book', 'Book', RelationMap::ONE_TO_MANY, array('id' => 'author_id', ), 'SET NULL', 'CASCADE');
+    $this->addRelation('Author', 'Author', RelationMap::MANY_TO_ONE, array('author_id' => 'id', ), 'SET NULL', 'CASCADE');
 	} // buildRelations()
 
-} // AuthorTableMap
+} // BookTableMap

@@ -47,6 +47,7 @@ abstract class AbstractTestSuite
 	
 	public function run()
 	{
+
     $config = include dirname(__FILE__) . '/config.php';
     
     $t = array();

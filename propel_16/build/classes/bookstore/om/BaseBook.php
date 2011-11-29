@@ -2,25 +2,25 @@
 
 
 /**
- * Base class that represents a row from the 'author' table.
+ * Base class that represents a row from the 'book' table.
  *
- * Author Table
+ * Book Table
  *
  * @package    propel.generator.bookstore.om
  */
-abstract class BaseAuthor extends BaseObject  implements Persistent
+abstract class BaseBook extends BaseObject  implements Persistent
 {
 
 	/**
 	 * Peer class name
 	 */
-	const PEER = 'AuthorPeer';
+	const PEER = 'BookPeer';
 
 	/**
 	 * The Peer class.
 	 * Instance provides a convenient way of calling static methods on a class
 	 * that calling code may not be able to identify.
-	 * @var        AuthorPeer
+	 * @var        BookPeer
 	 */
 	protected static $peer;
 
@@ -31,27 +31,33 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 	protected $id;
 
 	/**
-	 * The value for the first_name field.
+	 * The value for the title field.
 	 * @var        string
 	 */
-	protected $first_name;
+	protected $title;
 
 	/**
-	 * The value for the last_name field.
+	 * The value for the isbn field.
 	 * @var        string
 	 */
-	protected $last_name;
+	protected $isbn;
 
 	/**
-	 * The value for the email field.
-	 * @var        string
+	 * The value for the price field.
+	 * @var        double
 	 */
-	protected $email;
+	protected $price;
 
 	/**
-	 * @var        array Book[] Collection to store aggregation of Book objects.
+	 * The value for the author_id field.
+	 * @var        int
 	 */
-	protected $collBooks;
+	protected $author_id;
+
+	/**
+	 * @var        Author
+	 */
+	protected $aAuthor;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -78,40 +84,50 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Get the [first_name] column value.
-	 * First Name
+	 * Get the [title] column value.
+	 * Book Title
 	 * @return     string
 	 */
-	public function getFirstName()
+	public function getTitle()
 	{
-		return $this->first_name;
+		return $this->title;
 	}
 
 	/**
-	 * Get the [last_name] column value.
-	 * Last Name
+	 * Get the [isbn] column value.
+	 * ISBN Number
 	 * @return     string
 	 */
-	public function getLastName()
+	public function getISBN()
 	{
-		return $this->last_name;
+		return $this->isbn;
 	}
 
 	/**
-	 * Get the [email] column value.
-	 * E-Mail Address
-	 * @return     string
+	 * Get the [price] column value.
+	 * Price of the book.
+	 * @return     double
 	 */
-	public function getEmail()
+	public function getPrice()
 	{
-		return $this->email;
+		return $this->price;
+	}
+
+	/**
+	 * Get the [author_id] column value.
+	 * Foreign Key Author
+	 * @return     int
+	 */
+	public function getAuthorId()
+	{
+		return $this->author_id;
 	}
 
 	/**
 	 * Set the value of [id] column.
 	 * 
 	 * @param      int $v new value
-	 * @return     Author The current object (for fluent API support)
+	 * @return     Book The current object (for fluent API support)
 	 */
 	public function setId($v)
 	{
@@ -121,71 +137,95 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 
 		if ($this->id !== $v) {
 			$this->id = $v;
-			$this->modifiedColumns[] = AuthorPeer::ID;
+			$this->modifiedColumns[] = BookPeer::ID;
 		}
 
 		return $this;
 	} // setId()
 
 	/**
-	 * Set the value of [first_name] column.
-	 * First Name
+	 * Set the value of [title] column.
+	 * Book Title
 	 * @param      string $v new value
-	 * @return     Author The current object (for fluent API support)
+	 * @return     Book The current object (for fluent API support)
 	 */
-	public function setFirstName($v)
+	public function setTitle($v)
 	{
 		if ($v !== null) {
 			$v = (string) $v;
 		}
 
-		if ($this->first_name !== $v) {
-			$this->first_name = $v;
-			$this->modifiedColumns[] = AuthorPeer::FIRST_NAME;
+		if ($this->title !== $v) {
+			$this->title = $v;
+			$this->modifiedColumns[] = BookPeer::TITLE;
 		}
 
 		return $this;
-	} // setFirstName()
+	} // setTitle()
 
 	/**
-	 * Set the value of [last_name] column.
-	 * Last Name
+	 * Set the value of [isbn] column.
+	 * ISBN Number
 	 * @param      string $v new value
-	 * @return     Author The current object (for fluent API support)
+	 * @return     Book The current object (for fluent API support)
 	 */
-	public function setLastName($v)
+	public function setISBN($v)
 	{
 		if ($v !== null) {
 			$v = (string) $v;
 		}
 
-		if ($this->last_name !== $v) {
-			$this->last_name = $v;
-			$this->modifiedColumns[] = AuthorPeer::LAST_NAME;
+		if ($this->isbn !== $v) {
+			$this->isbn = $v;
+			$this->modifiedColumns[] = BookPeer::ISBN;
 		}
 
 		return $this;
-	} // setLastName()
+	} // setISBN()
 
 	/**
-	 * Set the value of [email] column.
-	 * E-Mail Address
-	 * @param      string $v new value
-	 * @return     Author The current object (for fluent API support)
+	 * Set the value of [price] column.
+	 * Price of the book.
+	 * @param      double $v new value
+	 * @return     Book The current object (for fluent API support)
 	 */
-	public function setEmail($v)
+	public function setPrice($v)
 	{
 		if ($v !== null) {
-			$v = (string) $v;
+			$v = (double) $v;
 		}
 
-		if ($this->email !== $v) {
-			$this->email = $v;
-			$this->modifiedColumns[] = AuthorPeer::EMAIL;
+		if ($this->price !== $v) {
+			$this->price = $v;
+			$this->modifiedColumns[] = BookPeer::PRICE;
 		}
 
 		return $this;
-	} // setEmail()
+	} // setPrice()
+
+	/**
+	 * Set the value of [author_id] column.
+	 * Foreign Key Author
+	 * @param      int $v new value
+	 * @return     Book The current object (for fluent API support)
+	 */
+	public function setAuthorId($v)
+	{
+		if ($v !== null) {
+			$v = (int) $v;
+		}
+
+		if ($this->author_id !== $v) {
+			$this->author_id = $v;
+			$this->modifiedColumns[] = BookPeer::AUTHOR_ID;
+		}
+
+		if ($this->aAuthor !== null && $this->aAuthor->getId() !== $v) {
+			$this->aAuthor = null;
+		}
+
+		return $this;
+	} // setAuthorId()
 
 	/**
 	 * Indicates whether the columns in this object are only set to default values.
@@ -220,9 +260,10 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 		try {
 
 			$this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-			$this->first_name = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
-			$this->last_name = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-			$this->email = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+			$this->title = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+			$this->isbn = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+			$this->price = ($row[$startcol + 3] !== null) ? (double) $row[$startcol + 3] : null;
+			$this->author_id = ($row[$startcol + 4] !== null) ? (int) $row[$startcol + 4] : null;
 			$this->resetModified();
 
 			$this->setNew(false);
@@ -231,10 +272,10 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 				$this->ensureConsistency();
 			}
 
-			return $startcol + 4; // 4 = AuthorPeer::NUM_COLUMNS - AuthorPeer::NUM_LAZY_LOAD_COLUMNS).
+			return $startcol + 5; // 5 = BookPeer::NUM_HYDRATE_COLUMNS.
 
 		} catch (Exception $e) {
-			throw new PropelException("Error populating Author object", $e);
+			throw new PropelException("Error populating Book object", $e);
 		}
 	}
 
@@ -254,6 +295,9 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 	public function ensureConsistency()
 	{
 
+		if ($this->aAuthor !== null && $this->author_id !== $this->aAuthor->getId()) {
+			$this->aAuthor = null;
+		}
 	} // ensureConsistency
 
 	/**
@@ -277,13 +321,13 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(AuthorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+			$con = Propel::getConnection(BookPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
 		// We don't need to alter the object instance pool; we're just modifying this instance
 		// already in the pool.
 
-		$stmt = AuthorPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
+		$stmt = BookPeer::doSelectStmt($this->buildPkeyCriteria(), $con);
 		$row = $stmt->fetch(PDO::FETCH_NUM);
 		$stmt->closeCursor();
 		if (!$row) {
@@ -293,8 +337,7 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 
 		if ($deep) {  // also de-associate any related objects?
 
-			$this->collBooks = null;
-
+			$this->aAuthor = null;
 		} // if (deep)
 	}
 
@@ -314,14 +357,14 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(AuthorPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(BookPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		$con->beginTransaction();
 		try {
 			$ret = $this->preDelete($con);
 			if ($ret) {
-				AuthorQuery::create()
+				BookQuery::create()
 					->filterByPrimaryKey($this->getPrimaryKey())
 					->delete($con);
 				$this->postDelete($con);
@@ -356,7 +399,7 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 		}
 
 		if ($con === null) {
-			$con = Propel::getConnection(AuthorPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+			$con = Propel::getConnection(BookPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
 
 		$con->beginTransaction();
@@ -376,7 +419,7 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 					$this->postUpdate($con);
 				}
 				$this->postSave($con);
-				AuthorPeer::addInstanceToPool($this);
+				BookPeer::addInstanceToPool($this);
 			} else {
 				$affectedRows = 0;
 			}
@@ -405,35 +448,39 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 		if (!$this->alreadyInSave) {
 			$this->alreadyInSave = true;
 
+			// We call the save method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aAuthor !== null) {
+				if ($this->aAuthor->isModified() || $this->aAuthor->isNew()) {
+					$affectedRows += $this->aAuthor->save($con);
+				}
+				$this->setAuthor($this->aAuthor);
+			}
+
 			if ($this->isNew() ) {
-				$this->modifiedColumns[] = AuthorPeer::ID;
+				$this->modifiedColumns[] = BookPeer::ID;
 			}
 
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
 					$criteria = $this->buildCriteria();
-					if ($criteria->keyContainsValue(AuthorPeer::ID) ) {
-						throw new PropelException('Cannot insert a value for auto-increment primary key ('.AuthorPeer::ID.')');
+					if ($criteria->keyContainsValue(BookPeer::ID) ) {
+						throw new PropelException('Cannot insert a value for auto-increment primary key ('.BookPeer::ID.')');
 					}
 
 					$pk = BasePeer::doInsert($criteria, $con);
-					$affectedRows = 1;
+					$affectedRows += 1;
 					$this->setId($pk);  //[IMV] update autoincrement primary key
 					$this->setNew(false);
 				} else {
-					$affectedRows = AuthorPeer::doUpdate($this, $con);
+					$affectedRows += BookPeer::doUpdate($this, $con);
 				}
 
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
-			}
-
-			if ($this->collBooks !== null) {
-				foreach ($this->collBooks as $referrerFK) {
-					if (!$referrerFK->isDeleted()) {
-						$affectedRows += $referrerFK->save($con);
-					}
-				}
 			}
 
 			$this->alreadyInSave = false;
@@ -502,18 +549,22 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 			$failureMap = array();
 
 
-			if (($retval = AuthorPeer::doValidate($this, $columns)) !== true) {
-				$failureMap = array_merge($failureMap, $retval);
+			// We call the validate method on the following object(s) if they
+			// were passed to this object by their coresponding set
+			// method.  This object relates to these object(s) by a
+			// foreign key reference.
+
+			if ($this->aAuthor !== null) {
+				if (!$this->aAuthor->validate($columns)) {
+					$failureMap = array_merge($failureMap, $this->aAuthor->getValidationFailures());
+				}
 			}
 
 
-				if ($this->collBooks !== null) {
-					foreach ($this->collBooks as $referrerFK) {
-						if (!$referrerFK->validate($columns)) {
-							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-						}
-					}
-				}
+			if (($retval = BookPeer::doValidate($this, $columns)) !== true) {
+				$failureMap = array_merge($failureMap, $retval);
+			}
+
 
 
 			$this->alreadyInValidation = false;
@@ -533,7 +584,7 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 	 */
 	public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
 	{
-		$pos = AuthorPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+		$pos = BookPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 		$field = $this->getByPosition($pos);
 		return $field;
 	}
@@ -552,13 +603,16 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 				return $this->getId();
 				break;
 			case 1:
-				return $this->getFirstName();
+				return $this->getTitle();
 				break;
 			case 2:
-				return $this->getLastName();
+				return $this->getISBN();
 				break;
 			case 3:
-				return $this->getEmail();
+				return $this->getPrice();
+				break;
+			case 4:
+				return $this->getAuthorId();
 				break;
 			default:
 				return null;
@@ -576,18 +630,30 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 	 *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
 	 *                    Defaults to BasePeer::TYPE_PHPNAME.
 	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+	 * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+	 * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
 	 *
 	 * @return    array an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
 	{
-		$keys = AuthorPeer::getFieldNames($keyType);
+		if (isset($alreadyDumpedObjects['Book'][$this->getPrimaryKey()])) {
+			return '*RECURSION*';
+		}
+		$alreadyDumpedObjects['Book'][$this->getPrimaryKey()] = true;
+		$keys = BookPeer::getFieldNames($keyType);
 		$result = array(
 			$keys[0] => $this->getId(),
-			$keys[1] => $this->getFirstName(),
-			$keys[2] => $this->getLastName(),
-			$keys[3] => $this->getEmail(),
+			$keys[1] => $this->getTitle(),
+			$keys[2] => $this->getISBN(),
+			$keys[3] => $this->getPrice(),
+			$keys[4] => $this->getAuthorId(),
 		);
+		if ($includeForeignObjects) {
+			if (null !== $this->aAuthor) {
+				$result['Author'] = $this->aAuthor->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+			}
+		}
 		return $result;
 	}
 
@@ -603,7 +669,7 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 	 */
 	public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
 	{
-		$pos = AuthorPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+		$pos = BookPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
 		return $this->setByPosition($pos, $value);
 	}
 
@@ -622,13 +688,16 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 				$this->setId($value);
 				break;
 			case 1:
-				$this->setFirstName($value);
+				$this->setTitle($value);
 				break;
 			case 2:
-				$this->setLastName($value);
+				$this->setISBN($value);
 				break;
 			case 3:
-				$this->setEmail($value);
+				$this->setPrice($value);
+				break;
+			case 4:
+				$this->setAuthorId($value);
 				break;
 		} // switch()
 	}
@@ -652,12 +721,13 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 	 */
 	public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
 	{
-		$keys = AuthorPeer::getFieldNames($keyType);
+		$keys = BookPeer::getFieldNames($keyType);
 
 		if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-		if (array_key_exists($keys[1], $arr)) $this->setFirstName($arr[$keys[1]]);
-		if (array_key_exists($keys[2], $arr)) $this->setLastName($arr[$keys[2]]);
-		if (array_key_exists($keys[3], $arr)) $this->setEmail($arr[$keys[3]]);
+		if (array_key_exists($keys[1], $arr)) $this->setTitle($arr[$keys[1]]);
+		if (array_key_exists($keys[2], $arr)) $this->setISBN($arr[$keys[2]]);
+		if (array_key_exists($keys[3], $arr)) $this->setPrice($arr[$keys[3]]);
+		if (array_key_exists($keys[4], $arr)) $this->setAuthorId($arr[$keys[4]]);
 	}
 
 	/**
@@ -667,12 +737,13 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 	 */
 	public function buildCriteria()
 	{
-		$criteria = new Criteria(AuthorPeer::DATABASE_NAME);
+		$criteria = new Criteria(BookPeer::DATABASE_NAME);
 
-		if ($this->isColumnModified(AuthorPeer::ID)) $criteria->add(AuthorPeer::ID, $this->id);
-		if ($this->isColumnModified(AuthorPeer::FIRST_NAME)) $criteria->add(AuthorPeer::FIRST_NAME, $this->first_name);
-		if ($this->isColumnModified(AuthorPeer::LAST_NAME)) $criteria->add(AuthorPeer::LAST_NAME, $this->last_name);
-		if ($this->isColumnModified(AuthorPeer::EMAIL)) $criteria->add(AuthorPeer::EMAIL, $this->email);
+		if ($this->isColumnModified(BookPeer::ID)) $criteria->add(BookPeer::ID, $this->id);
+		if ($this->isColumnModified(BookPeer::TITLE)) $criteria->add(BookPeer::TITLE, $this->title);
+		if ($this->isColumnModified(BookPeer::ISBN)) $criteria->add(BookPeer::ISBN, $this->isbn);
+		if ($this->isColumnModified(BookPeer::PRICE)) $criteria->add(BookPeer::PRICE, $this->price);
+		if ($this->isColumnModified(BookPeer::AUTHOR_ID)) $criteria->add(BookPeer::AUTHOR_ID, $this->author_id);
 
 		return $criteria;
 	}
@@ -687,8 +758,8 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 	 */
 	public function buildPkeyCriteria()
 	{
-		$criteria = new Criteria(AuthorPeer::DATABASE_NAME);
-		$criteria->add(AuthorPeer::ID, $this->id);
+		$criteria = new Criteria(BookPeer::DATABASE_NAME);
+		$criteria->add(BookPeer::ID, $this->id);
 
 		return $criteria;
 	}
@@ -728,32 +799,21 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 	 * If desired, this method can also make copies of all associated (fkey referrers)
 	 * objects.
 	 *
-	 * @param      object $copyObj An object of Author (or compatible) type.
+	 * @param      object $copyObj An object of Book (or compatible) type.
 	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+	 * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
 	 * @throws     PropelException
 	 */
-	public function copyInto($copyObj, $deepCopy = false)
+	public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
 	{
-		$copyObj->setFirstName($this->first_name);
-		$copyObj->setLastName($this->last_name);
-		$copyObj->setEmail($this->email);
-
-		if ($deepCopy) {
-			// important: temporarily setNew(false) because this affects the behavior of
-			// the getter/setter methods for fkey referrer objects.
-			$copyObj->setNew(false);
-
-			foreach ($this->getBooks() as $relObj) {
-				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addBook($relObj->copy($deepCopy));
-				}
-			}
-
-		} // if ($deepCopy)
-
-
-		$copyObj->setNew(true);
-		$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+		$copyObj->setTitle($this->getTitle());
+		$copyObj->setISBN($this->getISBN());
+		$copyObj->setPrice($this->getPrice());
+		$copyObj->setAuthorId($this->getAuthorId());
+		if ($makeNew) {
+			$copyObj->setNew(true);
+			$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+		}
 	}
 
 	/**
@@ -765,7 +825,7 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 	 * objects.
 	 *
 	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-	 * @return     Author Clone of current object.
+	 * @return     Book Clone of current object.
 	 * @throws     PropelException
 	 */
 	public function copy($deepCopy = false)
@@ -784,123 +844,63 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 	 * same instance for all member of this class. The method could therefore
 	 * be static, but this would prevent one from overriding the behavior.
 	 *
-	 * @return     AuthorPeer
+	 * @return     BookPeer
 	 */
 	public function getPeer()
 	{
 		if (self::$peer === null) {
-			self::$peer = new AuthorPeer();
+			self::$peer = new BookPeer();
 		}
 		return self::$peer;
 	}
 
 	/**
-	 * Clears out the collBooks collection
+	 * Declares an association between this object and a Author object.
 	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addBooks()
-	 */
-	public function clearBooks()
-	{
-		$this->collBooks = null; // important to set this to NULL since that means it is uninitialized
-	}
-
-	/**
-	 * Initializes the collBooks collection.
-	 *
-	 * By default this just sets the collBooks collection to an empty array (like clearcollBooks());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @return     void
-	 */
-	public function initBooks()
-	{
-		$this->collBooks = new PropelObjectCollection();
-		$this->collBooks->setModel('Book');
-	}
-
-	/**
-	 * Gets an array of Book objects which contain a foreign key that references this object.
-	 *
-	 * If the $criteria is not null, it is used to always fetch the results from the database.
-	 * Otherwise the results are fetched from the database the first time, then cached.
-	 * Next time the same method is called without $criteria, the cached collection is returned.
-	 * If this Author is new, it will return
-	 * an empty collection or the current collection; the criteria is ignored on a new object.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @return     PropelCollection|array Book[] List of Book objects
+	 * @param      Author $v
+	 * @return     Book The current object (for fluent API support)
 	 * @throws     PropelException
 	 */
-	public function getBooks($criteria = null, PropelPDO $con = null)
+	public function setAuthor(Author $v = null)
 	{
-		if(null === $this->collBooks || null !== $criteria) {
-			if ($this->isNew() && null === $this->collBooks) {
-				// return empty collection
-				$this->initBooks();
-			} else {
-				$collBooks = BookQuery::create(null, $criteria)
-					->filterByAuthor($this)
-					->find($con);
-				if (null !== $criteria) {
-					return $collBooks;
-				}
-				$this->collBooks = $collBooks;
-			}
-		}
-		return $this->collBooks;
-	}
-
-	/**
-	 * Returns the number of related Book objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related Book objects.
-	 * @throws     PropelException
-	 */
-	public function countBooks(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-	{
-		if(null === $this->collBooks || null !== $criteria) {
-			if ($this->isNew() && null === $this->collBooks) {
-				return 0;
-			} else {
-				$query = BookQuery::create(null, $criteria);
-				if($distinct) {
-					$query->distinct();
-				}
-				return $query
-					->filterByAuthor($this)
-					->count($con);
-			}
+		if ($v === null) {
+			$this->setAuthorId(NULL);
 		} else {
-			return count($this->collBooks);
+			$this->setAuthorId($v->getId());
 		}
+
+		$this->aAuthor = $v;
+
+		// Add binding for other direction of this n:n relationship.
+		// If this object has already been added to the Author object, it will not be re-added.
+		if ($v !== null) {
+			$v->addBook($this);
+		}
+
+		return $this;
 	}
 
+
 	/**
-	 * Method called to associate a Book object to this object
-	 * through the Book foreign key attribute.
+	 * Get the associated Author object
 	 *
-	 * @param      Book $l Book
-	 * @return     void
+	 * @param      PropelPDO Optional Connection object.
+	 * @return     Author The associated Author object.
 	 * @throws     PropelException
 	 */
-	public function addBook(Book $l)
+	public function getAuthor(PropelPDO $con = null)
 	{
-		if ($this->collBooks === null) {
-			$this->initBooks();
+		if ($this->aAuthor === null && ($this->author_id !== null)) {
+			$this->aAuthor = AuthorQuery::create()->findPk($this->author_id, $con);
+			/* The following can be used additionally to
+				guarantee the related object contains a reference
+				to this object.  This level of coupling may, however, be
+				undesirable since it could result in an only partially populated collection
+				in the referenced object.
+				$this->aAuthor->addBooks($this);
+			 */
 		}
-		if (!$this->collBooks->contains($l)) { // only add it if the **same** object is not already associated
-			$this->collBooks[]= $l;
-			$l->setAuthor($this);
-		}
+		return $this->aAuthor;
 	}
 
 	/**
@@ -909,9 +909,10 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 	public function clear()
 	{
 		$this->id = null;
-		$this->first_name = null;
-		$this->last_name = null;
-		$this->email = null;
+		$this->title = null;
+		$this->isbn = null;
+		$this->price = null;
+		$this->author_id = null;
 		$this->alreadyInSave = false;
 		$this->alreadyInValidation = false;
 		$this->clearAllReferences();
@@ -921,25 +922,30 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Resets all collections of referencing foreign keys.
+	 * Resets all references to other model objects or collections of model objects.
 	 *
-	 * This method is a user-space workaround for PHP's inability to garbage collect objects
-	 * with circular references.  This is currently necessary when using Propel in certain
-	 * daemon or large-volumne/high-memory operations.
+	 * This method is a user-space workaround for PHP's inability to garbage collect
+	 * objects with circular references (even in PHP 5.3). This is currently necessary
+	 * when using Propel in certain daemon or large-volumne/high-memory operations.
 	 *
-	 * @param      boolean $deep Whether to also clear the references on all associated objects.
+	 * @param      boolean $deep Whether to also clear the references on all referrer objects.
 	 */
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
-			if ($this->collBooks) {
-				foreach ((array) $this->collBooks as $o) {
-					$o->clearAllReferences($deep);
-				}
-			}
 		} // if ($deep)
 
-		$this->collBooks = null;
+		$this->aAuthor = null;
+	}
+
+	/**
+	 * Return the string representation of this object
+	 *
+	 * @return string The value of the 'title' column
+	 */
+	public function __toString()
+	{
+		return (string) $this->getTitle();
 	}
 
 	/**
@@ -961,4 +967,4 @@ abstract class BaseAuthor extends BaseObject  implements Persistent
 		return parent::__call($name, $params);
 	}
 
-} // BaseAuthor
+} // BaseBook

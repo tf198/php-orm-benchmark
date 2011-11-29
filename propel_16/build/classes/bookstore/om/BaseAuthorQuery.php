@@ -42,10 +42,6 @@
 abstract class BaseAuthorQuery extends ModelCriteria
 {
 
-	// query_cache behavior
-	protected $queryKey = '';
-	protected static $cacheBackend;
-				
 	/**
 	 * Initializes internal state of BaseAuthorQuery object.
 	 *
@@ -118,7 +114,7 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	 * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
 	 */
 	public function findPks($keys, $con = null)
-	{	
+	{
 		$criteria = $this->isKeepQuery() ? clone $this : $this;
 		return $this
 			->filterByPrimaryKeys($keys)
@@ -152,8 +148,17 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	/**
 	 * Filter the query on the id column
 	 * 
-	 * @param     int|array $id The value to use as filter.
-	 *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
+	 * Example usage:
+	 * <code>
+	 * $query->filterById(1234); // WHERE id = 1234
+	 * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
+	 * $query->filterById(array('min' => 12)); // WHERE id > 12
+	 * </code>
+	 *
+	 * @param     mixed $id The value to use as filter.
+	 *              Use scalar values for equality.
+	 *              Use array values for in_array() equivalent.
+	 *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    AuthorQuery The current query, for fluid interface
@@ -169,8 +174,14 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	/**
 	 * Filter the query on the first_name column
 	 * 
+	 * Example usage:
+	 * <code>
+	 * $query->filterByFirstName('fooValue');   // WHERE first_name = 'fooValue'
+	 * $query->filterByFirstName('%fooValue%'); // WHERE first_name LIKE '%fooValue%'
+	 * </code>
+	 *
 	 * @param     string $firstName The value to use as filter.
-	 *            Accepts wildcards (* and % trigger a LIKE)
+	 *              Accepts wildcards (* and % trigger a LIKE)
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    AuthorQuery The current query, for fluid interface
@@ -191,8 +202,14 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	/**
 	 * Filter the query on the last_name column
 	 * 
+	 * Example usage:
+	 * <code>
+	 * $query->filterByLastName('fooValue');   // WHERE last_name = 'fooValue'
+	 * $query->filterByLastName('%fooValue%'); // WHERE last_name LIKE '%fooValue%'
+	 * </code>
+	 *
 	 * @param     string $lastName The value to use as filter.
-	 *            Accepts wildcards (* and % trigger a LIKE)
+	 *              Accepts wildcards (* and % trigger a LIKE)
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    AuthorQuery The current query, for fluid interface
@@ -213,8 +230,14 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	/**
 	 * Filter the query on the email column
 	 * 
+	 * Example usage:
+	 * <code>
+	 * $query->filterByEmail('fooValue');   // WHERE email = 'fooValue'
+	 * $query->filterByEmail('%fooValue%'); // WHERE email LIKE '%fooValue%'
+	 * </code>
+	 *
 	 * @param     string $email The value to use as filter.
-	 *            Accepts wildcards (* and % trigger a LIKE)
+	 *              Accepts wildcards (* and % trigger a LIKE)
 	 * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
 	 *
 	 * @return    AuthorQuery The current query, for fluid interface
@@ -242,8 +265,17 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	 */
 	public function filterByBook($book, $comparison = null)
 	{
-		return $this
-			->addUsingAlias(AuthorPeer::ID, $book->getAuthorId(), $comparison);
+		if ($book instanceof Book) {
+			return $this
+				->addUsingAlias(AuthorPeer::ID, $book->getAuthorId(), $comparison);
+		} elseif ($book instanceof PropelCollection) {
+			return $this
+				->useBookQuery()
+					->filterByPrimaryKeys($book->getPrimaryKeys())
+				->endUse();
+		} else {
+			throw new PropelException('filterByBook() only accepts arguments of type Book or PropelCollection');
+		}
 	}
 
 	/**
@@ -310,127 +342,6 @@ abstract class BaseAuthorQuery extends ModelCriteria
 	  }
 	  
 		return $this;
-	}
-
-	// query_cache behavior
-	
-	public function setQueryKey($key)
-	{
-		$this->queryKey = $key;
-		return $this;
-	}
-	
-	public function getQueryKey()
-	{
-		return $this->queryKey;
-	}
-	
-	public function cacheContains($key)
-	{
-		return isset(self::$cacheBackend[$key]);
-	}
-	
-	public function cacheFetch($key)
-	{
-		return isset(self::$cacheBackend[$key]) ? self::$cacheBackend[$key] : null;
-	}
-	
-	public function cacheStore($key, $value, $lifetime = 3600)
-	{
-		self::$cacheBackend[$key] = $value;
-	}
-	
-	protected function getSelectStatement($con = null)
-	{
-		$dbMap = Propel::getDatabaseMap(AuthorPeer::DATABASE_NAME);
-		$db = Propel::getDB(AuthorPeer::DATABASE_NAME);
-	  if ($con === null) {
-			$con = Propel::getConnection(AuthorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-		}
-		
-		if (!$this->hasSelectClause()) {
-			$this->addSelfSelectColumns();
-		}
-		
-		$con->beginTransaction();
-		try {
-			$this->basePreSelect($con);
-			$key = $this->getQueryKey();
-			if ($key && $this->cacheContains($key)) {
-				$params = $this->getParams();
-				$sql = $this->cacheFetch($key);
-			} else {
-				$params = array();
-				$sql = BasePeer::createSelectSql($this, $params);
-				if ($key) {
-					$this->cacheStore($key, $sql);
-				}
-			}
-			$stmt = $con->prepare($sql);
-			BasePeer::populateStmtValues($stmt, $params, $dbMap, $db);
-			$stmt->execute();
-			$con->commit();
-		} catch (PropelException $e) {
-			$con->rollback();
-			throw $e;
-		}
-		
-		return $stmt;
-	}
-	
-	protected function getCountStatement($con = null)
-	{
-		$dbMap = Propel::getDatabaseMap($this->getDbName());
-		$db = Propel::getDB($this->getDbName());
-	  if ($con === null) {
-			$con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
-		}
-	
-		$con->beginTransaction();
-		try {
-			$this->basePreSelect($con);
-			$key = $this->getQueryKey();
-			if ($key && $this->cacheContains($key)) {
-				$params = $this->getParams();
-				$sql = $this->cacheFetch($key);
-			} else {
-				if (!$this->hasSelectClause() && !$this->getPrimaryCriteria()) {
-					$this->addSelfSelectColumns();
-				}
-				$params = array();
-				$needsComplexCount = $this->getGroupByColumns() 
-					|| $this->getOffset()
-					|| $this->getLimit() 
-					|| $this->getHaving() 
-					|| in_array(Criteria::DISTINCT, $this->getSelectModifiers());
-				if ($needsComplexCount) {
-					if (BasePeer::needsSelectAliases($this)) {
-						if ($this->getHaving()) {
-							throw new PropelException('Propel cannot create a COUNT query when using HAVING and  duplicate column names in the SELECT part');
-						}
-						$db->turnSelectColumnsToAliases($this);
-					}
-					$selectSql = BasePeer::createSelectSql($this, $params);
-					$sql = 'SELECT COUNT(*) FROM (' . $selectSql . ') propelmatch4cnt';
-				} else {
-					// Replace SELECT columns with COUNT(*)
-					$this->clearSelectColumns()->addSelectColumn('COUNT(*)');
-					$sql = BasePeer::createSelectSql($this, $params);
-				}
-				if ($key) {
-					$this->cacheStore($key, $sql);
-				}
-			}
-			$stmt = $con->prepare($sql);
-			BasePeer::populateStmtValues($stmt, $params, $dbMap, $db);
-			$stmt->execute();
-			$con->commit();
-		} catch (PropelException $e) {
-			$con->rollback();
-			throw $e;
-		}
-	
-		return $stmt;
 	}
 
 } // BaseAuthorQuery

@@ -10,3 +10,6 @@
 [submodule "doctrine_12/vendor/doctrine"]
 	path = doctrine_12/vendor/doctrine
 	url = git://github.com/doctrine/doctrine1.git
+[submodule "propel_16/vendor/propel"]
+	path = propel_16/vendor/propel
+	url = git://github.com/propelorm/Propel.git
