@@ -3,7 +3,7 @@
 echo "                     | Insert | findPk | complex| hydrate|  with  |     MB |\n";
 echo "                     |--------|--------|--------|--------|--------|--------|\n";
 
-passthru('php raw_pdo/OptTestRunner.php');
+//passthru('php raw_pdo/OptTestRunner.php');
 passthru('php raw_pdo/TestRunner.php');
 
 if(file_exists('dormio_01/vendor/dormio/classes')) {
