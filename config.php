@@ -1,11 +1,11 @@
 <?
 // Use this file to tweek the run times
 return array(
-  'runAuthorInsertion' => 800,
-  'runBookInsertion' => 800,
-  'runPKSearch' => 900,
-	'runComplexQuery' => 120,
-	'runHydrate' => 350,
-	'runJoinSearch' => 350,
+	'runAuthorInsertion' => 1200,
+	'runBookInsertion' => 1200,
+	'runPKSearch' => 1800,
+	'runComplexQuery' => 220,
+	'runHydrate' => 700,
+	'runJoinSearch' => 800,
 );
 ?>

@@ -83,7 +83,7 @@ class DormioTestSuite extends AbstractTestSuite
 	{
     $books = $this->dormio->manager('Book');
     $set = $books->with('author')->filter('title', '=', 'Hello' . $i)->limit(1);
-    $set->rewind(); // this runs the query
+    $set->getIterator()->rewind(); // this runs the query
 	}
   
   function runForeignKey($i) {
