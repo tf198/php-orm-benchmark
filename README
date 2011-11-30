@@ -17,10 +17,7 @@ Getting from github
 
     > git clone git://github.com/tf198/php-orm-benchmark.git
     > cd php-orm-benchmark
-    > git submodule update --init
-    # or for just specific libraries
-    # git submodule update --init dormio_01/vendor/dormio
-    
+	> make
 
 Running All The Benchmarks
 --------------------------
@@ -60,6 +57,8 @@ On my fairly old laptop with the run counts adjusted to give about 100 to PDO
              Propel15 |   1301 |    709 |    231 |    466 |    573 |   7.24 |
     Propel15WithCache |   1183 |    504 |    198 |    374 |    421 |   7.32 |
            Doctrine12 |   2445 |   3552 |    655 |   1968 |   2196 |  13.36 |
+
+Latest results are at https://github.com/tf198/php-orm-benchmark/blob/master/result.txt
            
 Disclaimer
 ----------
