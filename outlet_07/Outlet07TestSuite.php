@@ -14,7 +14,7 @@ class Outlet07TestSuite extends AbstractTestSuite
     require_once('models.php');
     require_once('vendor/outlet/classes/outlet/Outlet.php');
     
-    $config = include('config.php');
+    $config = include(dirname(__FILE__) . '/config.php');
     
     Outlet::init($config);
     $this->outlet = Outlet::getInstance();

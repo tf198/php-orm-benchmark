@@ -28,18 +28,15 @@ class OptDormioTestSuite extends AbstractTestSuite
     $this->author_insert = $authors->insert(array('first_name', 'last_name'));
     $this->book_insert = $books->insert(array('title', 'author', 'isbn', 'price'));
     
-    //$this->hydration_set = $books->filter('price', '>', $this->_hydrate_id)->limit(5);
-	$this->hydration_set = $books->where('{price} > ?', array(&$this->_hydrate_id))->limit(5);
-    //$this->with_set = $books->with('author')->filterBound('title', '=', $this->_with_title)->limit(1);
-	$this->with_set = $books->with('author')->where('{title}=?', array(&$this->_with_title))->limit(1);
+    $this->hydration_set = $books->filterVar('price', '>', $this->_hydrate_id)->limit(5);
+	$this->with_set = $books->with('author')->filterVar('title', '=', $this->_with_title)->limit(1);
     
     $this->complex_set = $authors
       ->where('{pk} > ? OR ({first_name} || {last_name}) = ?', array(&$this->_complex_id, 'John Doe'));
     $this->complex_aggregator = $this->complex_set->aggregate()->count();
       
     $this->fk_set = $books->with('author');
-    //$this->related_set = $authors->filter('first_name', '=', &$this->_related_name);
-	$this->related_set = $authors->where('{first_name}=?', array(&$this->_related_name));
+    $this->related_set = $authors->filterVar('first_name', '=', $this->_related_name);
 	}
 	
 	function clearCache()
