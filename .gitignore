@@ -1,0 +1,7 @@
+# non-git libraries
+outlet_07/vendor/outlet
+propel_14/vendor/propel
+propel_15/vendor/propel
+
+# build files
+src
