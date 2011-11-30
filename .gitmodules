@@ -1,9 +1,3 @@
-[submodule "propel_14/vendor/propel"]
-	path = propel_14/vendor/propel
-	url = git://github.com/Xosofox/propel.git
-[submodule "propel_15/vendor/propel"]
-	path = propel_15/vendor/propel
-	url = git://github.com/Xosofox/propel.git
 [submodule "dormio_01/vendor/dormio"]
 	path = dormio_01/vendor/dormio
 	url = git://github.com/tf198/dormio.git
