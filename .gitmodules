@@ -7,3 +7,9 @@
 [submodule "propel_16/vendor/propel"]
 	path = propel_16/vendor/propel
 	url = git://github.com/propelorm/Propel.git
+[submodule "notorm/vendor/notorm"]
+	path = notorm/vendor/notorm
+	url = git://github.com/vrana/notorm.git
+[submodule "dormio_08/src"]
+	path = dormio_08/src
+	url = /cygdrive/c/Docs/www/phplib/dormio_0.8

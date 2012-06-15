@@ -52,12 +52,13 @@ abstract class AbstractTestSuite
     
     $t = array();
     $tests = array_keys($config);
+		$timer = new sfTimer();
     for($i=0; $i<count($tests); $i++) {
       $t[$i] = $this->runTest($tests[$i], $config[$tests[$i]]);
     }
     $mem = memory_get_peak_usage() / (1024*1024);
-		echo sprintf("%20s | %6d | %6d | %6d | %6d | %6d | %6.2f |\n", 
-      substr(get_class($this), 0, -9), $t[0]+$t[1], $t[2], $t[3], $t[4], $t[5], $mem);
+		echo sprintf("%20s | %4d | %4d | %4d | %4d | %4d | %5.2f | %4d |\n", 
+      substr(get_class($this), 0, -9), $t[0]+$t[1], $t[2], $t[3], $t[4], $t[5], $mem, $timer->getElapsedTime() * 1000);
 	}
 	
 	public function runTest($methodName, $nbTest = self::NB_TEST)
@@ -65,7 +66,7 @@ abstract class AbstractTestSuite
 		$this->clearCache();
 		$this->beginTransaction();
 		$timer = new sfTimer();
-		for($i=0; $i<$nbTest; $i++) {
+		for($i=1; $i<$nbTest; $i++) {
 			$this->$methodName($i);
 		}
 		$t = $timer->getElapsedTime();
